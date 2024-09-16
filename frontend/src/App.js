@@ -7,6 +7,7 @@ import {
   Routes,
   Route
 } from "react-router-dom"
+import Register from "./pages/registration";
 
 function App(){
   return(
@@ -27,6 +28,11 @@ function App(){
             exact
             path="/userprofile"
             element={<UserProfile/>}
+          />
+          <Route 
+            exact
+            path="/register"
+            element={<Register/>}
           />
         </Routes>
       </BrowserRouter>
