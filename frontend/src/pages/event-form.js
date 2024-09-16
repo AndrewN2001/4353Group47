@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState } from 'react';
 
 function EventManagementForm() {
@@ -148,6 +147,4 @@ function EventManagementForm() {
 }
 
 export default EventManagementForm;
-=======
 
->>>>>>> 6a91384 (edited user-profile)
