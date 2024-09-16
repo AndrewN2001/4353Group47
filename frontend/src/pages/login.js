@@ -42,7 +42,7 @@ export default function Login(){
                 </div>
 
                 <div className="text-center">
-                    Don't have an account? <a className="text-blue-500 font-bold" href="/">Sign up here</a>!
+                    Don't have an account? <a className="text-blue-500 font-bold" href="/registration">Sign up here</a>!
                 </div>
             </div>
         </div>
