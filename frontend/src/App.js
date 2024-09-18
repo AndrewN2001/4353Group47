@@ -4,6 +4,8 @@ import Login from "./pages/login";
 import UserProfile from "./pages/user-profile";
 import Registration from "./pages/registration";
 import EventForm from "./pages/event-form";
+import VolunteerMatching from "./pages/volunteer-matching";
+import VolunteerHistory from "./pages/volunteer-history";
 import {
   BrowserRouter,
   Routes,
@@ -39,6 +41,16 @@ function App(){
             exact
             path="/eventform"
             element={<EventForm/>}
+          />
+          <Route 
+            exact
+            path="/volunteermatching"
+            element={<VolunteerMatching/>}
+          />
+          <Route 
+            exact
+            path="/volunteerhistory"
+            element={<VolunteerHistory/>}
           />
         </Routes>
       </BrowserRouter>
