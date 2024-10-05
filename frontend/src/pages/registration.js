@@ -8,6 +8,8 @@ export default function Register() {
         setPassVisible((prevState) => !prevState);
     };
 
+    
+
     return (
         <div className="min-w-screen min-h-screen flex justify-center items-center bg-slate-50">
             <div className="shadow-xl p-12 py-32 rounded-sm flex flex-col gap-4 bg-white">
@@ -38,7 +40,7 @@ export default function Register() {
                     </div>
                 </form>
 
-                <button className="bg-green-500 hover:bg-green-400 text-white py-3 rounded-md">
+                <button className="bg-blue-500 hover:bg-blue-400 text-white py-3 rounded-md">
                     <p className="font-bold">Register</p>
                 </button>
 
