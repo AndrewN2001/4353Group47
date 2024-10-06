@@ -33,13 +33,21 @@ const handleLogin = async (req, res) => {
     }
 } 
 
-// const handleRegister = async (req, res) => {
-//     try{
-
-//     } catch(error){
-//         console.error(error);
-//     }
-// }
+const handleRegister = async (req, res) => {
+    try{
+        const newUserData = req.body;
+        res.json({
+            accountInfo: searchUser.accountInfo,
+        })
+    } catch (error){
+        if (error.code === 11000){
+            return res.status(409).json({message: "Account already exists!"})
+        } else{
+            console.error("Error saving user:", error)
+            res.status(500).json({message: "Internal Server Error"})
+        }
+    }
+}
 
 module.exports = {
     handleLogin,
