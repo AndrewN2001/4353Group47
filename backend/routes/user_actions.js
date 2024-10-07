@@ -6,5 +6,6 @@ router.post('/login', userController.handleLogin);
 router.post('/register', userController.handleRegister);
 router.get('/profile/:userID', userController.getUserProfile);
 router.patch('/notifications/:userID', userController.handleNotifications);
+router.get('/volunteer-history/:userID', userController.getVolunteerHistory);
 
 module.exports = router;

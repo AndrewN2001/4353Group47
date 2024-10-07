@@ -1,37 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { IoIosArrowDropupCircle, IoIosArrowDropdownCircle } from "react-icons/io";
 
 // Random sample events to showcase presentation on the page
 const VolunteerHistory = () => {
-    const volunteerData = [
-        {
-            eventName: "Community Cleanup",
-            eventDescription: "A day to clean up the local park.",
-            location: "Central Park",
-            requiredSkills: "Physical endurance",
-            urgency: "High",
-            eventDate: "8-18-2024"
-        },
-        {
-            eventName: "Food Drive",
-            eventDescription: "Collecting food for the local food bank.",
-            location: "City Hall",
-            requiredSkills: "Organizational skills",
-            urgency: "Medium",
-            eventDate: "7-6-2024"
-        },
-        {
-            eventName: "Community Garden Planting",
-            eventDescription: "Help plant and maintain the community garden to promote green spaces in the neighborhood.",
-            location: "Greenway Community Garden",
-            requiredSkills: "Gardening knowledge, teamwork",
-            urgency: "Low",
-            eventDate: "6-15-2024"
-        }
-        
-    ];
-
+    const [volunteerData, setVolunteerData] = useState([]);
     const [openIndex, setOpenIndex] = useState(null);
+
+    useEffect(() => {
+        const userId = "someUserId"; // Replace with actual user ID when DB is connected
+        axios.get(`http://localhost:3001/api/users/volunteer-history/${userId}`)
+            .then(response => {
+                setVolunteerData(response.data);
+            })
+            .catch(error => {
+                console.error("Error fetching user data:", error);
+            });
+    }, []);
+
+    if (!volunteerData) {
+        return <div>Loading...</div>;
+    }
 
     const handleToggle = (index) => {
         setOpenIndex(openIndex === index ? null : index);

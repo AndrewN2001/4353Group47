@@ -2,10 +2,10 @@ const userModel = require("../models/user")
 const bcrypt = require('bcrypt')
 
 const handleLogin = async (req, res) => {
-    try{
-        const {email, password} = req.body.credentials.accountInfo;
-        const searchUser = await userModel.findOne({'accountInfo.email': email})
-        if (searchUser){
+    try {
+        const { email, password } = req.body.credentials.accountInfo;
+        const searchUser = await userModel.findOne({ 'accountInfo.email': email })
+        if (searchUser) {
             // const valid = await bcrypt.compare(password, searchUser.accountInfo.password);
             // if (valid){
             //     res.json({
@@ -15,37 +15,37 @@ const handleLogin = async (req, res) => {
             // } else{
             //     res.status(401).json({message: "Invalid password."})
             // }
-            if (password !== searchUser.accountInfo.password){
-                res.status(401).json({message: "Invalid password."})
-            } else{
+            if (password !== searchUser.accountInfo.password) {
+                res.status(401).json({ message: "Invalid password." })
+            } else {
                 res.json({
                     message: "login successful!",
                     accountInfo: searchUser.accountInfo,
                 })
             }
-        } else{
-            res.status(401).json({message: "User not found."})
+        } else {
+            res.status(401).json({ message: "User not found." })
         }
-    } catch(error){
+    } catch (error) {
         console.error(error);
         res.status(500).json({
             message: "Server Error",
         })
     }
-} 
+}
 
 const handleRegister = async (req, res) => {
-    try{
+    try {
         const newUserData = req.body.accountForm;
         // res.json(newUserData.accountForm);
-        const existingUser = await userModel.findOne({'accountInfo.emailAddress' : newUserData.emailAddress})
-        if (existingUser){
+        const existingUser = await userModel.findOne({ 'accountInfo.emailAddress': newUserData.emailAddress })
+        if (existingUser) {
             return res.status(409).json({
                 message: "Account already exists!"
             })
         }
         const newUser = new userModel({
-            name:{
+            name: {
                 firstName: newUserData.name.firstName,
                 lastName: newUserData.name.lastName
             },
@@ -59,12 +59,12 @@ const handleRegister = async (req, res) => {
         });
         // const saveUser = await newUser.save();
         res.json(newUser);
-    } catch (error){
-        if (error.code === 11000){
-            return res.status(409).json({message: "Account already exists!"})
-        } else{
+    } catch (error) {
+        if (error.code === 11000) {
+            return res.status(409).json({ message: "Account already exists!" })
+        } else {
             console.error("Error saving user:", error)
-            return res.status(500).json({message: "Internal Server Error"})
+            return res.status(500).json({ message: "Internal Server Error" })
         }
     }
 }
@@ -89,7 +89,7 @@ const getUserProfile = async (req, res) => {
                 friday: { start: "09:00", end: "12:00" },
                 saturday: { start: "10:00", end: "14:00" },
                 sunday: { start: "12:00", end: "16:00" }
-              }
+            }
         };
 
         // Respond with the hardcoded user profile
@@ -101,9 +101,9 @@ const getUserProfile = async (req, res) => {
 }
 
 const handleNotifications = async (req, res) => {
-    try{
-        const {userID} = req.params; // email will need to be passed through the route
-        const {newEventAssignments, newEventUpdates, newEventReminders} = req.body;
+    try {
+        const { userID } = req.params; // email will need to be passed through the route
+        const { newEventAssignments, newEventUpdates, newEventReminders } = req.body;
 
         const updatedUser = await userModel.findByIdAndUpdate(
             userID,
@@ -123,8 +123,47 @@ const handleNotifications = async (req, res) => {
         }
 
         res.status(200).json({ message: 'Notification settings updated successfully', user: updatedUser });
-    } catch (error){
+    } catch (error) {
         console.error("Something went wrong", error);
+    }
+}
+
+const getVolunteerHistory = async (req, res) => {
+    try {
+        // Hardcoded sample volunteer history data
+        const userId = req.params.userId;
+        const volunteerHistory = [
+            {
+                eventName: "Community Cleanup",
+                eventDescription: "A day to clean up the local park.",
+                location: "Central Park",
+                requiredSkills: "Physical endurance",
+                urgency: "High",
+                eventDate: "8-18-2024"
+            },
+            {
+                eventName: "Food Drive",
+                eventDescription: "Collecting food for the local food bank.",
+                location: "City Hall",
+                requiredSkills: "Organizational skills",
+                urgency: "Medium",
+                eventDate: "7-6-2024"
+            },
+            {
+                eventName: "Community Garden Planting",
+                eventDescription: "Help plant and maintain the community garden to promote green spaces in the neighborhood.",
+                location: "Greenway Community Garden",
+                requiredSkills: "Gardening knowledge, teamwork",
+                urgency: "Low",
+                eventDate: "6-15-2024"
+            }
+        ];
+
+        // Respond with the hardcoded volunteer history
+        res.json(volunteerHistory);
+    } catch (error) {
+        console.error("Error fetching volunteer history:", error);
+        res.status(500).json({ message: "Server Error" });
     }
 }
 
@@ -132,5 +171,6 @@ module.exports = {
     handleLogin,
     handleRegister,
     getUserProfile,
-    handleNotifications
+    handleNotifications,
+    getVolunteerHistory
 }
