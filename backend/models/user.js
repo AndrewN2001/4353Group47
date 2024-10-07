@@ -1,16 +1,6 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email'] // Email validation
-    },
-    password: {
-        type: String,
-        required: true,
-    },
     name: {
         firstName: {
             type: String,
@@ -35,6 +25,16 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         match: [/^\d{10}$/, 'Please enter a valid 10-digit phone number'] // Simple phone validation
+    }, 
+    emailAddress: {
+        type: String,
+        required: true,
+        unique: true,
+        match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email'] // Email validation
+    },
+    password: {
+        type: String,
+        required: true,
     }
 })
 

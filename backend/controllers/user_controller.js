@@ -1,4 +1,5 @@
 const userModel = require("../models/user")
+const bcrypt = require('bcrypt')
 
 const handleLogin = async (req, res) => {
     try{
@@ -35,14 +36,35 @@ const handleLogin = async (req, res) => {
 
 const handleRegister = async (req, res) => {
     try{
-        const newUserData = req.body;
-        res.json(newUserData);
+        const newUserData = req.body.accountForm;
+        // res.json(newUserData.accountForm);
+        const existingUser = await userModel.findOne({'accountInfo.emailAddress' : newUserData.emailAddress})
+        if (existingUser){
+            return res.status(409).json({
+                message: "Account already exists!"
+            })
+        }
+        const newUser = new userModel({
+            name:{
+                firstName: newUserData.name.firstName,
+                lastName: newUserData.name.lastName
+            },
+            location: {
+                city: newUserData.location.city,
+                state: newUserData.location.state
+            },
+            phoneNumber: newUserData.phoneNumber,
+            emailAddress: newUserData.emailAddress,
+            password: newUserData.password
+        });
+        // const saveUser = await newUser.save();
+        res.json(newUser);
     } catch (error){
         if (error.code === 11000){
             return res.status(409).json({message: "Account already exists!"})
         } else{
             console.error("Error saving user:", error)
-            res.status(500).json({message: "Internal Server Error"})
+            return res.status(500).json({message: "Internal Server Error"})
         }
     }
 }
