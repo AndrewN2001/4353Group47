@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {BsPersonFill} from "react-icons/bs";
 import { IoIosNotifications } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
@@ -7,9 +7,26 @@ import Skills from "../components/skills";
 import FullInfo from "../components/fullinfo";
 import Availability from "../components/availability";
 import Notifications from "../components/notifications";
+import axios from "axios"
 
 export default function UserProfile(){
     const [selectedPage, setSelected] = useState("dashboard")
+    const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+        const userId = "someUserId"; // Replace with actual user ID when DB is connected
+        axios.get(`http://localhost:3001/api/users/profile/${userId}`)
+            .then(response => {
+                setUserData(response.data);
+            })
+            .catch(error => {
+                console.error("Error fetching user data:", error);
+            });
+    }, []);
+
+    if (!userData) {
+        return <div>Loading...</div>;
+    }
 
     return(
         <div>
@@ -21,15 +38,15 @@ export default function UserProfile(){
                     <div id="username_info" className="border-r-2 row-span-3 col-span-1 flex flex-col items-center px-10 h-full min-w-fit">
                         <div className="h-1/2 w-full flex flex-col justify-around">
                             <div id="user_picture" className="bg-gray-500 h-96 mt-5 w-full flex justify-center items-center">
-                                Insert Image Here
+                                <img src={userData.imageURL} alt = "User"/>
                             </div>
 
                             <div className="text-center">
                                 <h1 className="text-4xl text-nowrap">
-                                    Andrew Nguyen
+                                    {userData.name}
                                 </h1>
                                 <h2>
-                                    Volunteer
+                                    {userData.role}
                                 </h2>
                             </div>
                         </div>

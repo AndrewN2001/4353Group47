@@ -47,7 +47,29 @@ const handleRegister = async (req, res) => {
     }
 }
 
+const getUserProfile = async (req, res) => {
+
+    try {
+        // For now, use a hardcoded user profile (replace with MongoDB query later)
+        const userId = req.params.userId; // userId for when needed by DB later
+        const userProfile = {
+            name: "Andrew Nguyen",
+            role: "Volunteer",
+            imageUrl: "https://placehold.co/600x400?text=User+Profile", // Placeholder image
+            skills: ["Communication", "Teamwork", "Problem Solving"],
+            availability: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        };
+
+        // Respond with the hardcoded user profile
+        res.json(userProfile);
+    } catch (error) {
+        console.error("Error fetching user profile:", error);
+        res.status(500).json({ message: "Server Error" });
+    }
+}
+
 module.exports = {
     handleLogin,
     handleRegister,
+    getUserProfile,
 }
