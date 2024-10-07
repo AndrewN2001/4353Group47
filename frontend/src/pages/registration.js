@@ -6,7 +6,7 @@ export default function Register() {
     const [passwordVisible, setPassVisible] = useState(true);
     const [confirmVisible, setConfirmVisible] = useState(true);
     const [confirmPW, setConfirm] = useState("");
-    const [passMatch, setPassMatch] = useState(false);
+    const [passMatch, setPassMatch] = useState(true);
     const [matchVisible, setMatchVisible] = useState(false);
     const [accountForm, setForm] = useState({
         name: {
@@ -30,19 +30,40 @@ export default function Register() {
         setConfirmVisible((prevState) => !prevState);
     };
 
-    const handlePassword = (e) => {
-        setForm(prevForm => ({
-            ...prevForm,
-            password: e.target.value
-        }))
-    }
-
     const handleConfirm = (e) => {
         setConfirm(e.target.value);
     }
 
-    const handleButton = (e) =>{
+    const handleChange = (e) => {
+        const {name, value} = e.target;
+        if (name.includes('.')){
+            const keys = name.split('.');
+            setForm(prevForm => ({
+                ...prevForm,
+                [keys[0]]: {
+                    ...prevForm[keys[0]],
+                    [keys[1]]: value
+                }
+            }));
+        } else{
+            setForm(prevForm => ({
+                ...prevForm,
+                [name]: value
+            }))
+        }
+    }
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (accountForm.password === confirmPW){
+            // console.log(accountForm);
+            axios.post("http://localhost:3001/api/users/register", {accountForm})
+            .then(result => {
+                console.log(result);
+            })
+        } else{
+            console.log("Passwords don't match.")
+        }
     }
 
     useEffect(() => {
@@ -70,43 +91,53 @@ export default function Register() {
                     <div className="flex gap-2">
                         <input
                             type="text"
-                            name="firstName"
+                            name="name.firstName"
                             id="firstName"
                             placeholder="First Name"
+                            // className={`border ${errors.name.firstName ? "border-gray-700" : "border-red-700 bg-red-50"} pl-2 py-2 rounded-sm w-52`}
                             className="border border-gray-700 pl-2 py-2 rounded-sm w-52"
+                            onChange={handleChange}
                         />
                         <input
                             type="text"
-                            name="lastName"
+                            name="name.lastName"
                             id="lastName"
                             placeholder="Last Name"
-                            className="border border-gray-700 pl-2 py-2 rounded-sm w-52"
+                            // className={`border ${errors.name.lastName ? "border-gray-700" : "border-red-700 bg-red-50"} pl-2 py-2 rounded-sm w-52`}
+                            className="border border-gray-700 pl-2 py-2 rounded-sm w-52" 
+                            onChange={handleChange}
                         />
                     </div>
 
                     <div className="flex gap-1">
                         <input
                             type="text"
-                            name="city"
+                            name="location.city"
                             id="city"
                             placeholder="City"
+                            // className={`border ${errors.location.city ? "border-gray-700" : "border-red-700 bg-red-50"} pl-2 py-2 rounded-sm w-3/4`}
                             className="border border-gray-700 pl-2 py-2 rounded-sm w-3/4"
+                            onChange={handleChange}
                         />
                         <input
                             type="text"
-                            name="state"
+                            name="location.state"
                             id="state"
                             placeholder="State"
+                            // className={`border ${errors.location.state ? "border-gray-700" : "border-red-700 bg-red-50"} pl-2 py-2 rounded-sm w-1/4`}
                             className="border border-gray-700 pl-2 py-2 rounded-sm w-1/4"
+                            onChange={handleChange}
                         />
                     </div>
 
                     <input
                         type="email"
-                        name="email"
+                        name="emailAddress"
                         id="email"
                         placeholder="Email Address"
+                        // className={`border ${errors.emailAddress ? "border-gray-700" : "border-red-700 bg-red-50"} pl-2 py-2 rounded-sm w-full`}
                         className="border border-gray-700 pl-2 py-2 rounded-sm w-full"
+                        onChange={handleChange}
                     />
 
                     <input
@@ -114,7 +145,9 @@ export default function Register() {
                         name="phoneNumber"
                         id="phoneNumber"
                         placeholder="Phone Number (e.g. 1234567890)"
+                        // className={`border ${errors.phoneNumber ? "border-gray-700" : "border-red-700 bg-red-50"} pl-2 py-2 rounded-sm w-full`}
                         className="border border-gray-700 pl-2 py-2 rounded-sm w-full"
+                        onChange={handleChange}
                     />      
 
                     <div className="relative">
@@ -123,8 +156,9 @@ export default function Register() {
                             name="password"
                             id="password"
                             placeholder="Password"
+                            // className={`border ${errors.password ? "border-gray-700" : "border-red-700 bg-red-50"} pl-2 py-2 rounded-sm w-full`}
                             className="border border-gray-700 pl-2 py-2 rounded-sm w-full"
-                            onChange={handlePassword}
+                            onChange={handleChange}
                         />
                         <button
                             type="button"
@@ -165,7 +199,7 @@ export default function Register() {
                     </div>
                 </form>
 
-                <button className="bg-blue-500 hover:bg-blue-400 text-white py-3 rounded-md">
+                <button className="bg-blue-500 hover:bg-blue-400 text-white py-3 rounded-md" onClick={handleSubmit}>
                     <p className="font-bold">Register</p>
                 </button>
 
