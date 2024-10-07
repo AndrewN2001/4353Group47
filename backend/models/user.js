@@ -35,6 +35,20 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
+    },
+    notifications: {
+        newEventAssignments:{
+            type: Boolean,
+            default: true
+        },
+        newEventUpdates:{
+            type: Boolean,
+            default: true
+        },
+        newEventReminders:{
+            type: Boolean,
+            default: true
+        }
     }
 })
 

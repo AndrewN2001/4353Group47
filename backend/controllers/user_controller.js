@@ -70,7 +70,6 @@ const handleRegister = async (req, res) => {
 }
 
 const getUserProfile = async (req, res) => {
-
     try {
         // For now, use a hardcoded user profile (replace with MongoDB query later)
         const userId = req.params.userId; // userId for when needed by DB later
@@ -91,7 +90,6 @@ const getUserProfile = async (req, res) => {
                 saturday: { start: "10:00", end: "14:00" },
                 sunday: { start: "12:00", end: "16:00" }
               }
-              
         };
 
         // Respond with the hardcoded user profile
@@ -102,8 +100,37 @@ const getUserProfile = async (req, res) => {
     }
 }
 
+const handleNotifications = async (req, res) => {
+    try{
+        const {userID} = req.params; // email will need to be passed through the route
+        const {newEventAssignments, newEventUpdates, newEventReminders} = req.body;
+
+        const updatedUser = await userModel.findByIdAndUpdate(
+            userID,
+            {
+                notifications: {
+                    newEventAssignments,
+                    newEventUpdates,
+                    newEventReminders
+                }
+            },
+            {
+                new: true //by default, findByIdAndUpdate returns the document before it's updated. This ensures that mongoose returns the document after it's updated
+            }
+        );
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json({ message: 'Notification settings updated successfully', user: updatedUser });
+    } catch (error){
+        console.error("Something went wrong", error);
+    }
+}
+
 module.exports = {
     handleLogin,
     handleRegister,
     getUserProfile,
+    handleNotifications
 }
