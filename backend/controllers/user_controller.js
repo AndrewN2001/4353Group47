@@ -36,9 +36,7 @@ const handleLogin = async (req, res) => {
 const handleRegister = async (req, res) => {
     try{
         const newUserData = req.body;
-        res.json({
-            accountInfo: searchUser.accountInfo,
-        })
+        res.json(newUserData);
     } catch (error){
         if (error.code === 11000){
             return res.status(409).json({message: "Account already exists!"})
