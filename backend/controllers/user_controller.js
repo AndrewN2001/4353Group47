@@ -55,9 +55,21 @@ const getUserProfile = async (req, res) => {
         const userProfile = {
             name: "Andrew Nguyen",
             role: "Volunteer",
+            address: "10924 Fairwood Dr, La Porte, TX 77571",
+            email: "andrew.nguyen.ta@gmail.com",
+            phoneNumber: "(832) 530-0481",
             imageUrl: "https://placehold.co/600x400?text=User+Profile", // Placeholder image
             skills: ["Communication", "Teamwork", "Problem Solving"],
-            availability: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+            availability: {
+                monday: { start: "09:00", end: "17:00" },
+                tuesday: { start: "10:00", end: "16:00" },
+                wednesday: { start: "09:00", end: "17:00" },
+                thursday: { start: "09:00", end: "15:00" },
+                friday: { start: "09:00", end: "12:00" },
+                saturday: { start: "10:00", end: "14:00" },
+                sunday: { start: "12:00", end: "16:00" }
+              }
+              
         };
 
         // Respond with the hardcoded user profile
