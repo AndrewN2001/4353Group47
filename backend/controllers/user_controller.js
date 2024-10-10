@@ -1,5 +1,6 @@
 const userModel = require("../models/user")
 const bcrypt = require('bcrypt')
+const { events, volunteers } = require('../global_arrays/data');
 
 const handleLogin = async (req, res) => {
     try {
@@ -73,27 +74,9 @@ const getUserProfile = async (req, res) => {
     try {
         // For now, use a hardcoded user profile (replace with MongoDB query later)
         const userId = req.params.userId; // userId for when needed by DB later
-        const userProfile = {
-            name: "Andrew Nguyen",
-            role: "Volunteer",
-            address: "10924 Fairwood Dr, La Porte, TX 77571",
-            email: "andrew.nguyen.ta@gmail.com",
-            phoneNumber: "(832) 530-0481",
-            imageUrl: "https://placehold.co/600x400?text=User+Profile", // Placeholder image
-            skills: ["Communication", "Teamwork", "Problem Solving"],
-            availability: {
-                monday: { start: "09:00", end: "17:00" },
-                tuesday: { start: "10:00", end: "16:00" },
-                wednesday: { start: "09:00", end: "17:00" },
-                thursday: { start: "09:00", end: "15:00" },
-                friday: { start: "09:00", end: "12:00" },
-                saturday: { start: "10:00", end: "14:00" },
-                sunday: { start: "12:00", end: "16:00" }
-            }
-        };
-
+        
         // Respond with the hardcoded user profile
-        res.json(userProfile);
+        res.json(volunteers[0]);
     } catch (error) {
         console.error("Error fetching user profile:", error);
         res.status(500).json({ message: "Server Error" });
