@@ -4,9 +4,9 @@ const { events, volunteers } = require('../global_arrays/data');
 
 const handleLogin = async (req, res) => {
     try {
-        const { email, password } = req.body.credentials.accountInfo;
-        const searchUser = await userModel.findOne({ 'accountInfo.email': email })
-        if (searchUser) {
+        // const { email, password } = req.body.credentials.accountInfo;
+        // const searchUser = await userModel.findOne({ 'accountInfo.email': email })
+        // if (searchUser) {
             // const valid = await bcrypt.compare(password, searchUser.accountInfo.password);
             // if (valid){
             //     res.json({
@@ -16,17 +16,18 @@ const handleLogin = async (req, res) => {
             // } else{
             //     res.status(401).json({message: "Invalid password."})
             // }
-            if (password !== searchUser.accountInfo.password) {
-                res.status(401).json({ message: "Invalid password." })
-            } else {
-                res.json({
-                    message: "login successful!",
-                    accountInfo: searchUser.accountInfo,
-                })
-            }
-        } else {
-            res.status(401).json({ message: "User not found." })
-        }
+            // if (password !== searchUser.accountInfo.password) {
+            //     res.status(401).json({ message: "Invalid password." })
+            // } else {
+            //     res.json({
+            //         message: "login successful!",
+            //         accountInfo: searchUser.accountInfo,
+            //     })
+            // }
+        res.json(req.body);
+        // } else {
+        //     res.status(401).json({ message: "User not found." })
+        // }
     } catch (error) {
         console.error(error);
         res.status(500).json({

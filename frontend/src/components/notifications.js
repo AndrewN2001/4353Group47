@@ -19,7 +19,7 @@ export default function Notifications(){
     }
 
     return(
-        <div className="p-7 col-span-1 w-fit">
+        <div className="mt-24 pl-7 col-span-1 w-fit">
             <h1 className="text-4xl text-nowrap">
                 Notification Settings
             </h1>

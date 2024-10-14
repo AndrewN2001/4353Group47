@@ -1,6 +1,9 @@
 import React from "react";
+import { useAuth } from "../middleware/user-vertification";
 
 export default function NavBar(){
+    const {isLoggedIn, loggedUser, logout} = useAuth();
+
     return(
         <div className="flex items-center justify-around bg-blue-600 text-white py-4 z-20 w-screen fixed shadow-lg">
             <div className="flex items-center gap-10">
@@ -21,9 +24,9 @@ export default function NavBar(){
                     </li>
 
                     <li>
-                        <button className="px-2 hover:underline hover:underline-offset-4">
+                        <a className="px-2 hover:underline hover:underline-offset-4" href="/eventlist">
                             Events
-                        </button>
+                        </a>
                     </li>
 
                     <li>
@@ -34,14 +37,25 @@ export default function NavBar(){
                 </ul>
             </div>
             
-            <div className="flex gap-5">
-                <a className="px-2 hover:underline hover:underline-offset-4" href="/login">
-                    Log In
-                </a>
-                <a className="px-2 hover:underline hover:underline-offset-4" href="/registration">
-                    Sign Up
-                </a>
-            </div>
+            {isLoggedIn ? (
+                <div className="flex gap-3 items-center">
+                    <h1 id="name">
+                        Welcome, {loggedUser}
+                    </h1>
+                    <a className="w-9 h-9 rounded-full bg-white" href="/userprofile">
+                        
+                    </a>   
+                </div>
+            ) : (
+                <div>
+                    <a className="px-2 hover:underline hover:underline-offset-4" href="/login">
+                        Log In
+                    </a>
+                    <a className="px-2 hover:underline hover:underline-offset-4" href="/registration">
+                        Sign Up
+                    </a>
+                </div>
+            )}
         </div>
     )
 }

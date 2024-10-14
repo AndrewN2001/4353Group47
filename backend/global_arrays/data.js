@@ -28,7 +28,7 @@ const events = [
 const volunteers = [
     {
         name: "Andrew Nguyen",
-        role: "Volunteer",
+        role: "Admin",
         address: "10924 Fairwood Dr, La Porte, TX 77571",
         email: "andrew.nguyen.ta@gmail.com",
         phoneNumber: "(832) 530-0481",
