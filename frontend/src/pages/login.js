@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FaEye, FaEyeSlash } from "react-icons/fa"
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useAuth } from "../middleware/user-vertification";
 
 export default function Login(){
     const navigate = useNavigate();
     const [passwordVisible, setPassVisible] = useState(true);
+    const {login} = useAuth();
     const [credentials, setCreds] = useState({
         accountInfo: {
             email: "",
@@ -33,7 +35,9 @@ export default function Login(){
         e.preventDefault();
         axios.post("http://localhost:3001/api/users/login", {credentials})
         .then(result => {
-            console.log(result);
+            // console.log(result);
+            login("Andrew");
+            navigate('/userprofile', {userInfo : {email: credentials.accountInfo.email}})
         })
         .catch(err => {
             console.log(err);

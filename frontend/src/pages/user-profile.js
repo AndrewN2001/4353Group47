@@ -5,36 +5,58 @@ import { IoClose } from "react-icons/io5";
 import Dashboard from "../components/fullinfo";
 import Notifications from "../components/notifications";
 import axios from "axios"
+import {useAuth} from "../middleware/user-vertification";
+import { useNavigate } from "react-router-dom";
 
 export default function UserProfile() {
+    const navigate = useNavigate();
     const [selectedPage, setSelected] = useState("dashboard")
     const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const {logout, setIsAdmin, isAdmin, setAdmin} = useAuth();
 
     useEffect(() => {
         const userId = "someUserId"; // Replace with actual user ID when DB is connected
         axios.get(`http://localhost:3001/api/users/profile/${userId}`)
             .then(response => {
                 setUserData(response.data);
+                console.log(response.data);
+                if (response.data.role === "Admin"){
+                    setAdmin(true);
+                } else{
+                    setAdmin(false);
+                }
             })
             .catch(error => {
                 console.error("Error fetching user data:", error);
-            });
+            })
+            .finally(() => {
+                setLoading(false);
+            })
     }, []);
 
-    if (!userData) {
-        return <div>Loading...</div>;
+    useEffect(() => {
+        console.log(isAdmin)
+    }, [isAdmin]);
+
+    const handleLogOut = () => {
+        logout();
+        navigate('/');
+    }
+
+    if (loading) {
+        return <div className="min-h-screen flex justify-center items-center">Loading...</div>;
+        // navigate('/login');
     }
 
     return (
         <div>
-            <div className="min-w-screen w-full flex-grow h-10 bg-gray-500"></div>
-
             <div className="sm:w-[40rem] md:w-full flex-grow px-28 flex items-center font-extralight">
                 <div className="min-w-[20rem] w-full min-h-screen bg-white shadow-md grid grid-rows-3 grid-cols-4">
 
                     <div id="username_info" className="border-r-2 row-span-3 col-span-1 flex flex-col items-center px-10 h-full min-w-fit">
-                        <div className="h-1/2 w-full flex flex-col justify-around">
-                            <div id="user_picture" className="bg-gray-500 h-96 mt-5 w-full flex justify-center items-center">
+                        <div className="h-1/2 w-full flex flex-col gap-7 mt-24">
+                            <div id="user_picture" className="bg-gray-500 h-96 w-full flex justify-center items-center">
                                 <img src={userData.imageURL} alt="User" />
                             </div>
 
@@ -65,7 +87,7 @@ export default function UserProfile() {
                                 </li>
                                 <li className="flex gap-2 items-center justify-center hover:bg-blue-500 w-full py-3">
                                     <IoClose />
-                                    <button>
+                                    <button onClick={handleLogOut}>
                                         Log Out
                                     </button>
                                 </li>
@@ -75,7 +97,7 @@ export default function UserProfile() {
 
                     {selectedPage === "dashboard" && (
                         <div className="col-span-3 row-span-3">
-                            <div id="userInformation" className="col-span-3 p-7">
+                            <div id="userInformation" className="col-span-3 p-7 mt-16">
                                 <h1 className="text-4xl">
                                     Full Information
                                 </h1>
