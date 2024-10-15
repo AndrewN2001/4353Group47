@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { BsPersonFill } from "react-icons/bs";
 import { IoIosNotifications } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
-import Dashboard from "../components/fullinfo";
+// import Dashboard from "../components/fullinfo";
 import Notifications from "../components/notifications";
 import axios from "axios"
 import {useAuth} from "../middleware/user-vertification";
@@ -13,7 +13,7 @@ export default function UserProfile() {
     const [selectedPage, setSelected] = useState("dashboard")
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const {logout, setIsAdmin, isAdmin, setAdmin} = useAuth();
+    const {logout, isAdmin, setAdmin} = useAuth();
 
     useEffect(() => {
         const userId = "someUserId"; // Replace with actual user ID when DB is connected

@@ -1,4 +1,4 @@
-import React, {useState, useContext} from "react";
+import React from "react";
 import './App.css'
 import NavBar from "./components/navbar"
 import Login from "./pages/login";
@@ -15,7 +15,7 @@ import {
   Routes,
   Route
 } from "react-router-dom"
-import { AuthProvider, useAuth } from "./middleware/user-vertification";
+import { AuthProvider } from "./middleware/user-vertification";
 import Footer from "./components/footer";
 function App(){
   return(
