@@ -16,6 +16,7 @@ import {
   Route
 } from "react-router-dom"
 import { AuthProvider, useAuth } from "./middleware/user-vertification";
+import Footer from "./components/footer";
 function App(){
   return(
     <AuthProvider>
@@ -71,6 +72,8 @@ function App(){
             />
           </Routes>
         </BrowserRouter>
+
+        <Footer/>
       </div>
     </AuthProvider>
   )
