@@ -114,10 +114,10 @@ export default function UserProfile() {
                                         </li>
                                         <li className="border-b-2 h-10 flex items-center gap-20 justify-between">
                                             <h1 className="font-semibold">
-                                                Address
+                                                Location
                                             </h1>
                                             <h1 className="font-light">
-                                                {userData.address}
+                                                {userData.location.city + ", " + userData.location.state}
                                             </h1>
                                         </li>
                                         <li className="border-b-2 h-10 flex items-center gap-20 justify-between">

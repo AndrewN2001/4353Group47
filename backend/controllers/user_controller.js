@@ -7,23 +7,23 @@ const handleLogin = async (req, res) => {
         // const { email, password } = req.body.credentials.accountInfo;
         // const searchUser = await userModel.findOne({ 'accountInfo.email': email })
         // if (searchUser) {
-            // const valid = await bcrypt.compare(password, searchUser.accountInfo.password);
-            // if (valid){
-            //     res.json({
-            //         message: "login successful!",
-            //         username: searchUser.accountInfo.username,
-            //     })
-            // } else{
-            //     res.status(401).json({message: "Invalid password."})
-            // }
-            // if (password !== searchUser.accountInfo.password) {
-            //     res.status(401).json({ message: "Invalid password." })
-            // } else {
-            //     res.json({
-            //         message: "login successful!",
-            //         accountInfo: searchUser.accountInfo,
-            //     })
-            // }
+        // const valid = await bcrypt.compare(password, searchUser.accountInfo.password);
+        // if (valid){
+        //     res.json({
+        //         message: "login successful!",
+        //         username: searchUser.accountInfo.username,
+        //     })
+        // } else{
+        //     res.status(401).json({message: "Invalid password."})
+        // }
+        // if (password !== searchUser.accountInfo.password) {
+        //     res.status(401).json({ message: "Invalid password." })
+        // } else {
+        //     res.json({
+        //         message: "login successful!",
+        //         accountInfo: searchUser.accountInfo,
+        //     })
+        // }
         res.json(req.body);
         // } else {
         //     res.status(401).json({ message: "User not found." })
@@ -75,7 +75,7 @@ const getUserProfile = async (req, res) => {
     try {
         // For now, use a hardcoded user profile (replace with MongoDB query later)
         const userId = req.params.userId; // userId for when needed by DB later
-        
+
         // Respond with the hardcoded user profile
         res.json(volunteers[0]);
     } catch (error) {
@@ -114,43 +114,50 @@ const handleNotifications = async (req, res) => {
 
 const getVolunteerHistory = async (req, res) => {
     try {
-        // Hardcoded sample volunteer history data
+        // For now, use hardcoded events (replace with MongoDB query later)
         const userId = req.params.userId;
-        const volunteerHistory = [
-            {
-                eventName: "Community Cleanup",
-                eventDescription: "A day to clean up the local park.",
-                location: "Central Park",
-                requiredSkills: "Physical endurance",
-                urgency: "High",
-                eventDate: "8-18-2024"
-            },
-            {
-                eventName: "Food Drive",
-                eventDescription: "Collecting food for the local food bank.",
-                location: "City Hall",
-                requiredSkills: "Organizational skills",
-                urgency: "Medium",
-                eventDate: "7-6-2024"
-            },
-            {
-                eventName: "Community Garden Planting",
-                eventDescription: "Help plant and maintain the community garden to promote green spaces in the neighborhood.",
-                location: "Greenway Community Garden",
-                requiredSkills: "Gardening knowledge, teamwork",
-                urgency: "Low",
-                eventDate: "6-15-2024"
-            }
-        ];
 
         // Respond with the hardcoded volunteer history
-        res.json(volunteerHistory);
+        res.json(events);
     } catch (error) {
         console.error("Error fetching volunteer history:", error);
         res.status(500).json({ message: "Server Error" });
     }
 }
 
+const handleMatching = async (req, res) => {
+    try {
+        let matches = [];
+
+        events.forEach(event => {
+            let eventMatches = {
+                eventName: event.eventName,
+                matchedVolunteers: []
+            };
+
+            volunteers.forEach(volunteer => {
+                if (volunteer.location.city === event.location.city) {
+
+                    const hasSkills = event.requiredSkills.every(skill => 
+                        volunteer.skills.includes(skill)
+                    );
+
+                    if (hasSkills) {
+                        eventMatches.matchedVolunteers.push(volunteer.name);
+                    }
+                }
+            });
+
+            matches.push(eventMatches);
+        });
+
+        res.json(matches);
+
+    } catch (error) {
+        console.error("Error fetching volunteer history:", error);
+        res.status(500).json({ message: "Server Error" });
+    }
+}
 module.exports = {
     handleLogin,
     handleRegister,
