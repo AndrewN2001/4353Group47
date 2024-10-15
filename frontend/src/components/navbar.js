@@ -5,10 +5,10 @@ export default function NavBar(){
     const {isLoggedIn, loggedUser, logout} = useAuth();
 
     return(
-        <div className="flex items-center justify-around bg-blue-600 text-white py-4 z-20 w-screen fixed shadow-lg">
+        <div className="flex items-center justify-around bg-[#4682B4] text-white py-4 z-20 w-screen fixed shadow-lg">
             <div className="flex items-center gap-10">
-                <h1 className="text-4xl">
-                    VOLUNTIFY
+                <h1 className="text-4xl font-semibold">
+                    Voluntify<span className="text-[#ADB446]">.</span>
                 </h1>
                 <ul className="flex gap-3 h-full">
                     <li className="h-full">
