@@ -20,7 +20,7 @@ import Footer from "./components/footer";
 function App(){
   return(
     <AuthProvider>
-      <div className="bg-slate-100">
+      <div>
         <NavBar/>
         
         <BrowserRouter>
