@@ -62,7 +62,7 @@ const VolunteerHistory = () => {
                                         <td colSpan="3" className="bg-gray-300">
                                             <div className="p-4">
                                                 <p><strong>Event Description:</strong> {event.eventDescription}</p>
-                                                <p><strong>Location:</strong> {event.location}</p>
+                                                <p><strong>Location:</strong> {event.location.city}</p>
                                                 <p><strong>Required Skills:</strong> {event.requiredSkills}</p>
                                                 <p><strong>Urgency:</strong> {event.urgency}</p>
                                                 <p><strong>Event Date:</strong> {event.eventDate}</p>

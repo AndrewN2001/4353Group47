@@ -6,9 +6,10 @@ const events = [
             city: "Houston",
             state: "Texas"
         },
-        requiredSkills: "Physical Endurance",
+        requiredSkills: ["Problem Solving", "Communication"],
         urgency: "High",
-        eventDate: "8-18-2024"
+        eventDate: "8-18-2024",
+        eventTime: "10:00"
     },
     {
         eventName: "Food Drive",
@@ -19,7 +20,8 @@ const events = [
         },
         requiredSkills: "Organizational Skills",
         urgency: "Medium",
-        eventDate: "7-6-2024"
+        eventDate: "7-6-2024",
+        eventTime: "9:00"
     },
     {
         eventName: "Community Garden Planting",
@@ -30,7 +32,8 @@ const events = [
         },
         requiredSkills: "Teamwork",
         urgency: "Low",
-        eventDate: "6-15-2024"
+        eventDate: "6-15-2024",
+        eventTime: "14:00"
     },
     {
         eventName: "Senior Citizen Support",
@@ -41,7 +44,8 @@ const events = [
         },
         requiredSkills: "Patience, communication",
         urgency: "High",
-        eventDate: "9-1-2024"
+        eventDate: "9-1-2024",
+        eventTime: "12:00"
     },
     {
         eventName: "Beach Cleanup",
@@ -52,7 +56,8 @@ const events = [
         },
         requiredSkills: "Physical Endurance",
         urgency: "High",
-        eventDate: "9-12-2024"
+        eventDate: "9-12-2024",
+        eventTime: "10:00"
     },
     {
         eventName: "Animal Shelter Volunteering",
@@ -63,7 +68,8 @@ const events = [
         },
         requiredSkills: "Compassion",
         urgency: "Medium",
-        eventDate: "10-5-2024"
+        eventDate: "10-5-2024",
+        eventTime: "11:00"
     },
     {
         eventName: "Tree Planting Initiative",
@@ -74,7 +80,8 @@ const events = [
         },
         requiredSkills: "Environmental Awareness",
         urgency: "Medium",
-        eventDate: "10-12-2024"
+        eventDate: "10-12-2024",
+        eventTime: "13:00"
     },
     {
         eventName: "Blood Donation Drive",
@@ -85,7 +92,8 @@ const events = [
         },
         requiredSkills: "Organization, Teamwork",
         urgency: "High",
-        eventDate: "11-3-2024"
+        eventDate: "11-3-2024",
+        eventTime: "9:00"
     }
 ];
 
