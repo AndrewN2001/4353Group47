@@ -135,39 +135,52 @@ const handleMatching = async (req, res) => {
             return days[date.getDay()];
         };
 
-        events.forEach(event => {
-            let eventMatches = {
-                eventName: event.eventName,
-                matchedVolunteers: []
-            };
+        volunteers.forEach(volunteer => {
+            if (volunteer.role === "Volunteer") {
+                let volunteerMatches = {
+                    volunteerName: volunteer.name,
+                    matchedEvents: []
+                };
 
-            const eventDay = getDayOfWeek(event.eventDate);
 
-            volunteers.forEach(volunteer => {
-                if (volunteer.location.city === event.location.city && 
-                    volunteer.availability[eventDay] && 
-                    volunteer.availability[eventDay].start <= event.eventTime && 
-                    volunteer.availability[eventDay].end > event.eventTime) {
 
-                    const hasSkills = event.requiredSkills.every(skill => 
-                        volunteer.skills.includes(skill)
-                    );
+                events.forEach(event => {
+                    const eventDay = getDayOfWeek(event.eventDate);
+                    if (volunteer.location.city === event.location.city &&
+                        volunteer.availability[eventDay] &&
+                        volunteer.availability[eventDay].start <= event.eventTime &&
+                        volunteer.availability[eventDay].end > event.eventTime) {
 
-                    if (hasSkills) {
-                        eventMatches.matchedVolunteers.push(volunteer.name);
+                        const hasSkills = event.requiredSkills.every(skill =>
+                            volunteer.skills.includes(skill)
+                        );
+
+                        if (hasSkills) {
+                            volunteerMatches.matchedEvents.push(event.eventName);
+                        }
                     }
-                }
-            });
+                });
 
-            matches.push(eventMatches);
+                matches.push(volunteerMatches);
+            }
         });
 
         res.json(matches);
 
     } catch (error) {
-        console.error("Error fetching volunteer history:", error);
+        console.error("Error fetching volunteer matching:", error);
         res.status(500).json({ message: "Server Error" });
     }
+}
+
+const getData = async (req, res) => {
+    try {
+        res.json({ events, volunteers });
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        res.status(500).json({ message: "Server Error" });
+    }
+
 }
 
 module.exports = {
@@ -175,5 +188,7 @@ module.exports = {
     handleRegister,
     getUserProfile,
     handleNotifications,
-    getVolunteerHistory
+    getVolunteerHistory,
+    handleMatching,
+    getData
 }
