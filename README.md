@@ -7,8 +7,9 @@ A web application to create and manage volunteers and volunteering events.
 Before running the project, ensure the following are installed:
 - Node.js
 - npm
+
 Usually npm is included when installing Node.js
-  
+
 To set up Voluntify, follow these steps:
 
 1. Clone the repository: **`git clone https://github.com/AndrewN2001/4353Group47.git`**
