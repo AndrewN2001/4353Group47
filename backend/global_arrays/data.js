@@ -8,7 +8,7 @@ const events = [
         },
         requiredSkills: ["Problem Solving", "Communication"],
         urgency: "High",
-        eventDate: "8-18-2024",
+        eventDate: "10-19-2024",
         eventTime: "10:00"
     },
     {
@@ -18,10 +18,10 @@ const events = [
             city: "Dallas",
             state: "Texas"
         },
-        requiredSkills: "Organizational Skills",
+        requiredSkills: ["Patience", "Organized"],
         urgency: "Medium",
-        eventDate: "7-6-2024",
-        eventTime: "9:00"
+        eventDate: "10-23-2024",
+        eventTime: "09:00"
     },
     {
         eventName: "Community Garden Planting",
@@ -30,10 +30,10 @@ const events = [
             city: "Houston",
             state: "Texas"
         },
-        requiredSkills: "Teamwork",
+        requiredSkills: ["Teamwork"],
         urgency: "Low",
-        eventDate: "6-15-2024",
-        eventTime: "14:00"
+        eventDate: "10-25-2024",
+        eventTime: "17:00"
     },
     {
         eventName: "Senior Citizen Support",
@@ -42,9 +42,9 @@ const events = [
             city: "Dallas",
             state: "Texas"
         },
-        requiredSkills: "Patience, communication",
+        requiredSkills: ["Patience", "Communication"],
         urgency: "High",
-        eventDate: "9-1-2024",
+        eventDate: "11-1-2024",
         eventTime: "12:00"
     },
     {
@@ -54,9 +54,9 @@ const events = [
             city: "San Antonio",
             state: "Texas"
         },
-        requiredSkills: "Physical Endurance",
+        requiredSkills: ["Organized", "Teamwork"],
         urgency: "High",
-        eventDate: "9-12-2024",
+        eventDate: "10-22-2024",
         eventTime: "10:00"
     },
     {
@@ -66,9 +66,9 @@ const events = [
             city: "San Antonio",
             state: "Texas"
         },
-        requiredSkills: "Compassion",
+        requiredSkills: ["Patience", "Compassion"],
         urgency: "Medium",
-        eventDate: "10-5-2024",
+        eventDate: "10-27-2024",
         eventTime: "11:00"
     },
     {
@@ -78,10 +78,10 @@ const events = [
             city: "Austin",
             state: "Texas"
         },
-        requiredSkills: "Environmental Awareness",
+        requiredSkills: ["Problem Solving", "Teamwork"],
         urgency: "Medium",
-        eventDate: "10-12-2024",
-        eventTime: "13:00"
+        eventDate: "10-21-2024",
+        eventTime: "11:00"
     },
     {
         eventName: "Blood Donation Drive",
@@ -90,10 +90,10 @@ const events = [
             city: "Austin",
             state: "Texas"
         },
-        requiredSkills: "Organization, Teamwork",
+        requiredSkills: ["Organized"],
         urgency: "High",
-        eventDate: "11-3-2024",
-        eventTime: "9:00"
+        eventDate: "11-1-2024",
+        eventTime: "09:00"
     }
 ];
 
@@ -150,7 +150,7 @@ const volunteers = [
         email: "john.doe@example.com",
         phoneNumber: "(713) 555-0123",
         imageUrl: "https://placehold.co/600x400?text=User+Profile",
-        skills: ["Leadership", "Public Speaking", "Time Management"],
+        skills: ["Patience", "Communication", "Organized"],
         availability: {
             monday: { start: "08:00", end: "12:00" },
             tuesday: { start: "N/A", end: "N/A" },
@@ -171,7 +171,7 @@ const volunteers = [
         email: "jane.smith@example.com",
         phoneNumber: "(512) 555-9876",
         imageUrl: "https://placehold.co/600x400?text=User+Profile",
-        skills: ["Organization", "Problem Solving", "Event Coordination"],
+        skills: ["Organized", "Problem Solving", "Teamwork", "Patience", "Compassion"],
         availability: {
             monday: { start: "N/A", end: "N/A" },
             tuesday: { start: "08:00", end: "12:00" },
@@ -192,7 +192,7 @@ const volunteers = [
         email: "melissa.jones@example.com",
         phoneNumber: "(214) 555-9090",
         imageUrl: "https://placehold.co/600x400?text=User+Profile",
-        skills: ["Event Coordination", "Public Relations"],
+        skills: ["Teamwork", "Public Relations", "Organized", "Problem Solving"],
         availability: {
             monday: { start: "09:00", end: "13:00" },
             tuesday: { start: "11:00", end: "15:00" },

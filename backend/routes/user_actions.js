@@ -7,5 +7,7 @@ router.post('/register', userController.handleRegister);
 router.get('/profile/:userID', userController.getUserProfile);
 router.patch('/notifications/:userID', userController.handleNotifications);
 router.get('/volunteer-history/:userID', userController.getVolunteerHistory);
+router.get('/volunteer-matching', userController.handleMatching);
+router.get('/data', userController.getData);
 
 module.exports = router;
