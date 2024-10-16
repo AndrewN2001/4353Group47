@@ -129,14 +129,25 @@ const handleMatching = async (req, res) => {
     try {
         let matches = [];
 
+        const getDayOfWeek = (dateString) => {
+            const date = new Date(dateString);
+            const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            return days[date.getDay()];
+        };
+
         events.forEach(event => {
             let eventMatches = {
                 eventName: event.eventName,
                 matchedVolunteers: []
             };
 
+            const eventDay = getDayOfWeek(event.eventDate);
+
             volunteers.forEach(volunteer => {
-                if (volunteer.location.city === event.location.city) {
+                if (volunteer.location.city === event.location.city && 
+                    volunteer.availability[eventDay] && 
+                    volunteer.availability[eventDay].start <= event.eventTime && 
+                    volunteer.availability[eventDay].end > event.eventTime) {
 
                     const hasSkills = event.requiredSkills.every(skill => 
                         volunteer.skills.includes(skill)
@@ -158,6 +169,7 @@ const handleMatching = async (req, res) => {
         res.status(500).json({ message: "Server Error" });
     }
 }
+
 module.exports = {
     handleLogin,
     handleRegister,
