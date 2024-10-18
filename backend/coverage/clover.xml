@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1729286749185" clover="3.2.0">
-  <project timestamp="1729286749185" name="All files">
+<coverage generated="1729287397759" clover="3.2.0">
+  <project timestamp="1729287397759" name="All files">
     <metrics statements="134" coveredstatements="134" conditionals="14" coveredconditionals="13" methods="18" coveredmethods="18" elements="166" coveredelements="165" complexity="0" loc="134" ncloc="134" packages="4" files="7" classes="7"/>
     <package name="controllers">
       <metrics statements="106" coveredstatements="106" conditionals="14" coveredconditionals="13" methods="17" coveredmethods="17"/>
-      <file name="event_controller.js" path="C:\Users\ender\Documents\App\4353Group47\backend\controllers\event_controller.js">
+      <file name="event_controller.js" path="/Users/andrewnguyen/VSCode Projects/4353Group47/backend/controllers/event_controller.js">
         <metrics statements="26" coveredstatements="26" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
         <line num="1" count="2" type="stmt"/>
         <line num="3" count="2" type="stmt"/>
@@ -33,7 +33,7 @@
         <line num="67" count="1" type="stmt"/>
         <line num="71" count="2" type="stmt"/>
       </file>
-      <file name="user_controller.js" path="C:\Users\ender\Documents\App\4353Group47\backend\controllers\user_controller.js">
+      <file name="user_controller.js" path="/Users/andrewnguyen/VSCode Projects/4353Group47/backend/controllers/user_controller.js">
         <metrics statements="80" coveredstatements="80" conditionals="14" coveredconditionals="13" methods="13" coveredmethods="13"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
@@ -119,7 +119,7 @@
     </package>
     <package name="global_arrays">
       <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-      <file name="data.js" path="C:\Users\ender\Documents\App\4353Group47\backend\global_arrays\data.js">
+      <file name="data.js" path="/Users/andrewnguyen/VSCode Projects/4353Group47/backend/global_arrays/data.js">
         <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="4" type="stmt"/>
         <line num="100" count="4" type="stmt"/>
@@ -128,14 +128,14 @@
     </package>
     <package name="models">
       <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
-      <file name="event.js" path="C:\Users\ender\Documents\App\4353Group47\backend\models\event.js">
+      <file name="event.js" path="/Users/andrewnguyen/VSCode Projects/4353Group47/backend/models/event.js">
         <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="3" type="stmt"/>
         <line num="3" count="3" type="stmt"/>
         <line num="40" count="4" type="stmt"/>
         <line num="47" count="3" type="stmt"/>
       </file>
-      <file name="user.js" path="C:\Users\ender\Documents\App\4353Group47\backend\models\user.js">
+      <file name="user.js" path="/Users/andrewnguyen/VSCode Projects/4353Group47/backend/models/user.js">
         <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="4" type="stmt"/>
         <line num="3" count="4" type="stmt"/>
@@ -144,7 +144,7 @@
     </package>
     <package name="routes">
       <metrics statements="18" coveredstatements="18" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-      <file name="event_actions.js" path="C:\Users\ender\Documents\App\4353Group47\backend\routes\event_actions.js">
+      <file name="event_actions.js" path="/Users/andrewnguyen/VSCode Projects/4353Group47/backend/routes/event_actions.js">
         <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -152,7 +152,7 @@
         <line num="5" count="1" type="stmt"/>
         <line num="7" count="1" type="stmt"/>
       </file>
-      <file name="user_actions.js" path="C:\Users\ender\Documents\App\4353Group47\backend\routes\user_actions.js">
+      <file name="user_actions.js" path="/Users/andrewnguyen/VSCode Projects/4353Group47/backend/routes/user_actions.js">
         <metrics statements="13" coveredstatements="13" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
