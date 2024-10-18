@@ -62,12 +62,12 @@ const handleRegister = async (req, res) => {
         // const saveUser = await newUser.save();
         res.json(newUser);
     } catch (error) {
-        if (error.code === 11000) {
-            return res.status(409).json({ message: "Account already exists!" })
-        } else {
+        // if (error.code === 11000) {
+        //     return res.status(409).json({ message: "Account already exists!" })
+        // } else {
             console.error("Error saving user:", error)
             return res.status(500).json({ message: "Internal Server Error" })
-        }
+        // }
     }
 }
 
@@ -109,8 +109,9 @@ const handleNotifications = async (req, res) => {
         res.status(200).json({ message: 'Notification settings updated successfully', user: updatedUser });
     } catch (error) {
         console.error("Something went wrong", error);
+        res.status(500).json({ message: "Something went wrong" });
     }
-}
+} 
 
 const getVolunteerHistory = async (req, res) => {
     try {
