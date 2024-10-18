@@ -100,7 +100,7 @@ const events = [
 const volunteers = [
     {
         name: "Andrew Nguyen",
-        role: "Admin",
+        role: "Volunteer",
         location: {
             city: "La Porte",
             state: "Texas"
@@ -117,7 +117,31 @@ const volunteers = [
             friday: { start: "09:00", end: "12:00" },
             saturday: { start: "10:00", end: "14:00" },
             sunday: { start: "12:00", end: "16:00" }
-        }
+        },
+        appliedEvents: [
+            {
+                eventName: "Community Cleanup",
+                eventDescription: "A day to clean up the local park.",
+                location: {
+                    city: "Houston",
+                    state: "Texas"
+                },
+                requiredSkills: "Physical Endurance",
+                urgency: "High",
+                eventDate: "8-18-2024"
+            },
+            {
+                eventName: "Food Drive",
+                eventDescription: "Collecting food for the local food bank.",
+                location: {
+                    city: "Dallas",
+                    state: "Texas"
+                },
+                requiredSkills: "Organizational Skills",
+                urgency: "Medium",
+                eventDate: "7-6-2024"
+            }
+        ]
     },
     {
         name: "Kevin Leon",

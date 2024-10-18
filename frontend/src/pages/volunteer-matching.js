@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from 'react';
 
 const VolunteerMatching = () => {
     const [volunteers, setVolunteers] = useState([]);
@@ -29,6 +28,15 @@ const VolunteerMatching = () => {
             console.error("Error fetching matches:", error);
         }
     };
+
+    const {isAdmin, isLoggedIn} = useAuth();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!isLoggedIn || !isAdmin) {
+            navigate('/not-authorized');
+        }
+    }, [isLoggedIn, isAdmin, navigate])
 
     return (
         <div className="min-h-screen bg-gray-100 p-8">

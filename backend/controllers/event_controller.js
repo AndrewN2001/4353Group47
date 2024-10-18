@@ -49,7 +49,27 @@ const getAllEvents = async (req, res) => {
     }
 }
 
+const deleteEvent = async(req, res) => {
+    try{
+        res.json(req.body);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message: "Server Error"})
+    }
+}
+
+const updateEvent = async(req, res) => {
+    try{
+        res.json(req.body)
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message: "Server Error"})
+    }
+}
+
 module.exports = {
     createEvent,
-    getAllEvents
+    getAllEvents,
+    deleteEvent,
+    updateEvent
 }

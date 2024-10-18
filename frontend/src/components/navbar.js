@@ -5,7 +5,7 @@ export default function NavBar(){
     const {isLoggedIn, loggedUser, logout} = useAuth();
 
     return(
-        <div className="flex items-center justify-around bg-[#4682B4] text-white py-4 z-20 w-screen fixed shadow-lg">
+        <div className="flex items-center justify-around bg-primaryblue text-white py-4 z-20 w-screen fixed shadow-lg">
             <div className="flex items-center gap-10">
                 <h1 className="text-4xl font-semibold">
                     Voluntify<span className="text-[#ADB446]">.</span>
@@ -18,9 +18,9 @@ export default function NavBar(){
                     </li>
 
                     <li>
-                        <button className="px-2 hover:underline hover:underline-offset-4">
+                        <a className="px-2 hover:underline hover:underline-offset-4" href="/about">
                             About
-                        </button>
+                        </a>
                     </li>
 
                     <li>

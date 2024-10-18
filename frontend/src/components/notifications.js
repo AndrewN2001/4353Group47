@@ -78,7 +78,7 @@ export default function Notifications(){
                 </form>
             </div>
 
-            <button className="bg-blue-500 hover:bg-blue-400 text-white py-3 px-10 rounded-md mt-10" onClick={handleSubmit}>
+            <button className="bg-primaryblue hover:bg-primaryblue text-white py-3 px-10 rounded-md mt-10" onClick={handleSubmit}>
                 <p className="font-bold">Save</p>
             </button>
         </div>
