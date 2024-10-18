@@ -19,6 +19,8 @@ export const AuthProvider = ({children}) => {
             setLoggedIn(true);
             if (storedAdmin === "true"){
                 setIsAdmin(true);
+            } else{
+                setIsAdmin(false);
             }
         }
     }, []);
@@ -32,13 +34,14 @@ export const AuthProvider = ({children}) => {
     const logout = () => {
         setLoggedIn(false);
         setLoggedUser(null);
+        setIsAdmin(false);
         localStorage.removeItem("loggedUser");
         localStorage.removeItem("isAdmin");
     }
 
     const setAdmin = (state) => {
         setIsAdmin(state);
-        localStorage.setItem("isAdmin", true);
+        localStorage.setItem("isAdmin", state ? "true": "false");
     }
 
     return(

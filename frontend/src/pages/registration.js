@@ -199,13 +199,13 @@ export default function Register() {
                     </div>
                 </form>
 
-                <button className="bg-blue-500 hover:bg-blue-400 text-white py-3 rounded-md" onClick={handleSubmit}>
+                <button className="bg-primaryblue hover:bg-primaryblue-light text-white py-3 rounded-md" onClick={handleSubmit}>
                     <p className="font-bold">Register</p>
                 </button>
 
                 <div className="text-center">
                     Already have an account?{" "}
-                    <a className="text-blue-500 font-bold" href="/login">
+                    <a className="text-primaryblue font-bold" href="/login">
                         Sign in here!
                     </a>
                 </div>
