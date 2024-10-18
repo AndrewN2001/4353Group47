@@ -102,8 +102,85 @@ describe('handleRegister', () => {
             password: 'password123'
         }));
     });
+    it('should handle errors and return a 500 status code', async () => {
+        const req = null;
+        const res = mockRes;
+        console.error = jest.fn();
+        await handleRegister(req, res);
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({
+            message: "Internal Server Error",
+        });
+        expect(console.error).toHaveBeenCalled();
+    });
 });
 
+describe('handleNotifications', () => {
+    it('should update notification settings for a user', async () => {
+        const mockUserID = '1'; // Mock user ID
+        const mockUser = {
+            _id: mockUserID,
+            notifications: {
+                newEventAssignments: true,
+                newEventUpdates: false,
+                newEventReminders: true
+            }
+        };
+
+        // Mock request parameters and body
+        mockReq.params = { userID: mockUserID };
+        mockReq.body = {
+            newEventAssignments: true,
+            newEventUpdates: false,
+            newEventReminders: true
+        };
+
+        // Mock userModel behavior
+        userModel.findByIdAndUpdate.mockResolvedValue(mockUser);
+
+        await handleNotifications(mockReq, mockRes);
+
+        // Expectations for response
+        expect(mockRes.status).toHaveBeenCalledWith(200);
+        expect(mockRes.json).toHaveBeenCalledWith({
+            message: 'Notification settings updated successfully',
+            user: mockUser
+        });
+    });
+
+    it('should return 404 if user is not found', async () => {
+        const mockUserID = '1';
+
+        // Mock request parameters
+        mockReq.params = { userID: mockUserID };
+        mockReq.body = {
+            newEventAssignments: true,
+            newEventUpdates: false,
+            newEventReminders: true
+        };
+
+        // Simulate user not found
+        userModel.findByIdAndUpdate.mockResolvedValue(null);
+
+        await handleNotifications(mockReq, mockRes);
+
+        // Expectations for 404 response
+        expect(mockRes.status).toHaveBeenCalledWith(404);
+        expect(mockRes.json).toHaveBeenCalledWith({ message: 'User not found' });
+    });
+
+    it('should handle errors and return a 500 status code', async () => {
+        const req = null;
+        const res = mockRes;
+        console.error = jest.fn();
+        await handleNotifications(req, res);
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({
+            message: "Something went wrong",
+        });
+        expect(console.error).toHaveBeenCalled();
+    });
+});
 
 
 // Test for getUserProfile
