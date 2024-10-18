@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../middleware/user-vertification';
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 function EventManagementForm() {
-
+  const {isAdmin, isLoggedIn} = useAuth();
+  const navigate = useNavigate();
   const [eventName, setEventName] = useState('');
   const [eventDescription, setEventDescription] = useState('');
   const [location, setLocation] = useState('');
@@ -52,6 +55,11 @@ function EventManagementForm() {
     setRequiredSkills(selectedSkills);
   };
   
+  useEffect(() => {
+    if (!isLoggedIn || !isAdmin) {
+        navigate('/not-authorized');
+    }
+}, [isLoggedIn, isAdmin, navigate])
 
   return (
     <div className="min-w-screen min-h-screen bg-gray-100 flex items-center">

@@ -173,6 +173,7 @@ const handleMatching = async (req, res) => {
     }
 }
 
+
 const getData = async (req, res) => {
     try {
         res.json({ events, volunteers });
@@ -183,6 +184,29 @@ const getData = async (req, res) => {
 
 }
 
+
+const EventSignUp = async (req, res) => {
+    try{
+        res.json(req.body);
+    } catch{
+        console.error(error);
+        res.status(500).json({
+            message: "Server Error",
+        })
+    }
+}
+
+const getEvents = async(req, res) => {
+    try{
+        res.json(volunteers[0].appliedEvents);
+    } catch{
+        console.error(error);
+        res.status(500).json({
+            message: "Server Error",
+        })
+    }
+}
+
 module.exports = {
     handleLogin,
     handleRegister,
@@ -190,5 +214,7 @@ module.exports = {
     handleNotifications,
     getVolunteerHistory,
     handleMatching,
-    getData
+    getData,
+    EventSignUp,
+    getEvents
 }

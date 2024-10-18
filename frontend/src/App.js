@@ -7,7 +7,6 @@ import Registration from "./pages/registration";
 import EventForm from "./pages/event-form";
 import HomePage from "./pages/home-page";
 import VolunteerMatching from "./pages/volunteer-matching";
-import VolunteerHistory from "./pages/volunteer-history";
 import Recover from "./pages/forgot-password";
 import EventList from "./pages/event-list";
 import {
@@ -17,7 +16,10 @@ import {
 } from "react-router-dom"
 import { AuthProvider } from "./middleware/user-vertification";
 import Footer from "./components/footer";
-function App(){
+import NotAuthorized from "./pages/not-authorized";
+import About from "./pages/about";
+
+export default function App(){
   return(
     <AuthProvider>
       <div>
@@ -57,11 +59,6 @@ function App(){
             />
             <Route 
               exact
-              path="/volunteerhistory"
-              element={<VolunteerHistory/>}
-            />
-            <Route 
-              exact
               path="/recover"
               element={<Recover/>}
             />
@@ -69,6 +66,16 @@ function App(){
               exact
               path="/eventlist"
               element={<EventList/>}
+            />
+            <Route 
+              exact
+              path="/not-authorized"
+              element={<NotAuthorized/>}
+            />
+            <Route 
+              exact
+              path="/about"
+              element={<About/>}
             />
           </Routes>
         </BrowserRouter>
@@ -78,5 +85,3 @@ function App(){
     </AuthProvider>
   )
 }
-
-export default App;

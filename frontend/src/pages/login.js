@@ -37,7 +37,7 @@ export default function Login(){
         .then(result => {
             // console.log(result);
             login("Andrew");
-            navigate('/userprofile', {userInfo : {email: credentials.accountInfo.email}})
+            navigate('/userprofile')
         })
         .catch(err => {
             console.log(err);
@@ -76,20 +76,20 @@ export default function Login(){
                     
                 </form>
 
-                <button className="bg-blue-500 hover:bg-blue-400 text-white py-3 rounded-md" onClick={handleSubmit}>
+                <button className="bg-primaryblue hover:bg-primaryblue-light text-white py-3 rounded-md" onClick={handleSubmit}>
                     <p className="font-bold">
                         Sign In
                     </p>
                 </button>
 
-                <div className="text-center text-blue-500">
+                <div className="text-center text-primaryblue">
                     <a href="/recover">
                         Forgot Password?
                     </a>
                 </div>
 
                 <div className="text-center">
-                    Don't have an account? <a className="text-blue-500 font-bold" href="/registration">Sign up here</a>!
+                    Don't have an account? <a className="text-primaryblue font-bold" href="/registration">Sign up here</a>!
                 </div>
             </div>
         </div>
