@@ -10,6 +10,7 @@ export const AuthProvider = ({children}) => {
     const [isLoggedIn, setLoggedIn] = useState(false);
     const [loggedUser, setLoggedUser] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const storedUser = localStorage.getItem("loggedUser")
@@ -23,6 +24,7 @@ export const AuthProvider = ({children}) => {
                 setIsAdmin(false);
             }
         }
+        setLoading(false);
     }, []);
 
     const login = (name) => {
@@ -46,7 +48,7 @@ export const AuthProvider = ({children}) => {
 
     return(
         <AuthContext.Provider value={{isLoggedIn, loggedUser, login, logout, setIsAdmin, isAdmin, setAdmin}}>
-            {children}
+            {!loading && children}
         </AuthContext.Provider>
     )
 }
