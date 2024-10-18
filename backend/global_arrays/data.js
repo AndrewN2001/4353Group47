@@ -100,7 +100,7 @@ const events = [
 const volunteers = [
     {
         name: "Andrew Nguyen",
-        role: "Volunteer",
+        role: "Admin",
         location: {
             city: "La Porte",
             state: "Texas"
