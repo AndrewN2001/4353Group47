@@ -176,6 +176,7 @@ const handleMatching = async (req, res) => {
 
 const getData = async (req, res) => {
     try {
+        const userId = req.params.userId;
         res.json({ events, volunteers });
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -187,9 +188,10 @@ const getData = async (req, res) => {
 
 const EventSignUp = async (req, res) => {
     try{
+        const userId = req.params.userId;
         res.json(req.body);
-    } catch{
-        console.error(error);
+    } catch (error){
+        console.error("Error fetching data:", error);
         res.status(500).json({
             message: "Server Error",
         })
@@ -198,9 +200,10 @@ const EventSignUp = async (req, res) => {
 
 const getEvents = async(req, res) => {
     try{
+        const userId = req.params.userId;
         res.json(volunteers[0].appliedEvents);
-    } catch{
-        console.error(error);
+    } catch (error){
+        console.error("Error fetching data:", error);
         res.status(500).json({
             message: "Server Error",
         })

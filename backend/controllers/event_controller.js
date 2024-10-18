@@ -41,6 +41,7 @@ const createEvent = async (req, res) => {
 
 const getAllEvents = async (req, res) => {
     try{
+        const testForm = req.body;
         const events = await eventModel.find();
         res.json(sampleEvents)
     } catch (error) {
@@ -71,5 +72,6 @@ module.exports = {
     createEvent,
     getAllEvents,
     deleteEvent,
-    updateEvent
+    updateEvent,
+    sampleEvents
 }

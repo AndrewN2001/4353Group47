@@ -1,4 +1,4 @@
-const { handleLogin, handleRegister, getUserProfile, handleNotifications, getVolunteerHistory, handleMatching, getData } = require('../controllers/user_controller');
+const { handleLogin, handleRegister, getUserProfile, handleNotifications, getVolunteerHistory, handleMatching, getData, EventSignUp, getEvents } = require('../controllers/user_controller');
 const userModel = require('../models/user'); // mock this
 const { events, volunteers } = require('../global_arrays/data');
 
@@ -16,12 +16,16 @@ const mockRes = {
     status: jest.fn(() => mockRes),
 };
 
+beforeEach(() => {
+    jest.clearAllMocks();
+});
+
 // Test for handleLogin
 describe('handleLogin', () => {
     it('should return the request body', async () => {
-        mockReq.body = { test: 'data' };
+        mockReq.body = { credentials: { email: 'test@example.com', password: 'password123' } };
         await handleLogin(mockReq, mockRes);
-        expect(mockRes.json).toHaveBeenCalledWith({ test: 'data' });
+        expect(mockRes.json).toHaveBeenCalledWith(mockReq.body);
     });
 
     it('should handle errors and return a 500 status code', async () => {
@@ -43,6 +47,7 @@ describe('handleLogin', () => {
         // Check if console.error was called
         expect(console.error).toHaveBeenCalled();
     });
+
 });
 
 // Test for handleRegister
@@ -58,21 +63,48 @@ describe('handleRegister', () => {
         expect(mockRes.json).toHaveBeenCalledWith({ message: "Account already exists!" });
     });
 
-    // it('should register a user successfully', async () => {
-    //     const userData = {
-    //       firstName: 'John',
-    //       lastName: 'Doe',
-    //       email: 'john.doe@example.com',
-    //       password: 'password123',
-    //       location: { city: 'New York', state: 'NY' },
-    //       phoneNumber: '1234567890'
-    //     };
+    it('should register a user successfully', async () => {
+        const userData = {
+            name: {
+                firstName: 'John',
+                lastName: 'Doe',
+            },
+            location: {
+                city: "Houston",
+                state: "TX"
+            },
+            phoneNumber: '1234567890',
+            emailAddress: 'john.doe@example.com',
+            password: 'password123'
+        };
     
-    //     const response = await request(app).post('/register').send(userData);
+        // Mock user not found
+        userModel.findOne.mockResolvedValue(null);
         
-    //     expect(response.body).toHaveProperty('message', 'User registered successfully');
-    //   });
+        // Mock user creation
+        const newUserMock = { ...userData, _id: '1234' };
+        userModel.mockReturnValue(newUserMock); // Mock constructor to return new user object
+
+        mockReq.body.accountForm = userData;
+        await handleRegister(mockReq, mockRes);
+    
+        expect(mockRes.json).toHaveBeenCalledWith(expect.objectContaining({
+            name: {
+                firstName: 'John',
+                lastName: 'Doe',
+            },
+            location: {
+                city: "Houston",
+                state: "TX"
+            },
+            phoneNumber: '1234567890',
+            emailAddress: 'john.doe@example.com',
+            password: 'password123'
+        }));
+    });
 });
+
+
 
 // Test for getUserProfile
 describe('getUserProfile', () => {
@@ -125,5 +157,100 @@ describe('handleMatching', () => {
         await handleMatching(mockReq, mockRes);
 
         expect(mockRes.json).toHaveBeenCalledWith(expect.any(Array));  // Expecting array of matches
+    });
+    it('should handle errors and return a 500 status code', async () => {
+        // Simulate the req and res objects
+        const req = mockReq;
+        const res = mockRes;
+
+        // Mock an error in the function by throwing it manually or mocking dependencies
+        jest.spyOn(global, 'Date').mockImplementation(() => {
+            throw new Error('Simulated error');
+        });
+
+        // Mock console.error to prevent actual logging in the test output
+        console.error = jest.fn();
+
+        // Call handleMatching and expect it to handle the error case
+        await handleMatching(req, res);
+
+        // Check that res.status was called with 500
+        expect(res.status).toHaveBeenCalledWith(500);
+        // Check that res.json was called with the error message
+        expect(res.json).toHaveBeenCalledWith({
+            message: "Server Error",
+        });
+
+        // Verify that console.error was called (error logging)
+        expect(console.error).toHaveBeenCalled();
+
+        // Restore Date after test
+        global.Date.mockRestore();
+    });
+});
+
+describe('getData', () => {
+    it('should return all events and volunteers', async () => {
+        mockReq.params = { userId: '1' };
+
+        await getData(mockReq, mockRes);
+
+        expect(mockRes.json).toHaveBeenCalledWith({ events, volunteers });
+    });
+
+    it('should handle errors and return a 500 status code', async () => {
+        const req = null;
+        const res = mockRes;
+        console.error = jest.fn();
+        await getData(req, res);
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({
+            message: "Server Error",
+        });
+        expect(console.error).toHaveBeenCalled();
+    });
+});
+
+describe('EventSignUp', () => {
+    it('should return the req', async () => {
+        mockReq.params = { userId: '1' };
+
+        await EventSignUp(mockReq, mockRes);
+
+        expect(mockRes.json).toHaveBeenCalledWith(mockReq.body);
+    });
+
+    it('should handle errors and return a 500 status code', async () => {
+        const req = null;
+        const res = mockRes;
+        console.error = jest.fn();
+        await EventSignUp(req, res);
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({
+            message: "Server Error",
+        });
+        expect(console.error).toHaveBeenCalled();
+    });
+});
+
+describe('getEvents', () => {
+    it('should return the applied event', async () => {
+        mockReq.params = { userId: '1' };
+
+        await getEvents(mockReq, mockRes);
+
+        expect(mockRes.json).toHaveBeenCalledWith(volunteers[0].appliedEvents);
+    });
+
+    it('should handle errors and return a 500 status code', async () => {
+        const req = null;
+        const res = mockRes;
+        console.error = jest.fn();
+        await getEvents(req, res);
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({
+            message: "Server Error",
+        });
+        expect(console.error).toHaveBeenCalled();
     });
 });
