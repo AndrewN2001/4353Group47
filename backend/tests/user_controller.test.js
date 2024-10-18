@@ -23,6 +23,26 @@ describe('handleLogin', () => {
         await handleLogin(mockReq, mockRes);
         expect(mockRes.json).toHaveBeenCalledWith({ test: 'data' });
     });
+
+    it('should handle errors and return a 500 status code', async () => {
+        // Simulate an error by passing null req.body (you can simulate other errors as needed)
+        const req = null;
+        const res = mockRes;
+
+        // Mock console.error to suppress error output during the test
+        console.error = jest.fn();
+
+        await handleLogin(req, res);
+
+        // Check if res.status was called with 500 and res.json with the error message
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({
+            message: "Server Error",
+        });
+
+        // Check if console.error was called
+        expect(console.error).toHaveBeenCalled();
+    });
 });
 
 // Test for handleRegister
@@ -62,6 +82,40 @@ describe('getUserProfile', () => {
         await getUserProfile(mockReq, mockRes);
 
         expect(mockRes.json).toHaveBeenCalledWith(volunteers[0]);
+    });
+    it('should handle errors and return a 500 status code', async () => {
+        const req = null;
+        const res = mockRes;
+        console.error = jest.fn();
+        await getUserProfile(req, res);
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({
+            message: "Server Error",
+        });
+        expect(console.error).toHaveBeenCalled();
+    });
+});
+
+// Test for volunteerHistory
+describe('getVolunteerHistory', () => {
+    it('should return all events', async () => {
+        mockReq.params = { userId: '1' };
+
+        await getVolunteerHistory(mockReq, mockRes);
+
+        expect(mockRes.json).toHaveBeenCalledWith(events);
+    });
+
+    it('should handle errors and return a 500 status code', async () => {
+        const req = null;
+        const res = mockRes;
+        console.error = jest.fn();
+        await getVolunteerHistory(req, res);
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({
+            message: "Server Error",
+        });
+        expect(console.error).toHaveBeenCalled();
     });
 });
 

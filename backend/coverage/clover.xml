@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1729222595708" clover="3.2.0">
-  <project timestamp="1729222595709" name="All files">
-    <metrics statements="78" coveredstatements="49" conditionals="16" coveredconditionals="10" methods="12" coveredmethods="9" elements="106" coveredelements="68" complexity="0" loc="78" ncloc="78" packages="3" files="4" classes="4"/>
+<coverage generated="1729275336954" clover="3.2.0">
+  <project timestamp="1729275336954" name="All files">
+    <metrics statements="78" coveredstatements="58" conditionals="16" coveredconditionals="10" methods="12" coveredmethods="10" elements="106" coveredelements="78" complexity="0" loc="78" ncloc="78" packages="3" files="4" classes="4"/>
     <package name="controllers">
-      <metrics statements="68" coveredstatements="39" conditionals="16" coveredconditionals="10" methods="11" coveredmethods="8"/>
+      <metrics statements="68" coveredstatements="48" conditionals="16" coveredconditionals="10" methods="11" coveredmethods="9"/>
       <file name="user_controller.js" path="C:\Users\ender\Documents\App\4353Group47\backend\controllers\user_controller.js">
-        <metrics statements="68" coveredstatements="39" conditionals="16" coveredconditionals="10" methods="11" coveredmethods="8"/>
+        <metrics statements="68" coveredstatements="48" conditionals="16" coveredconditionals="10" methods="11" coveredmethods="9"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="5" count="1" type="stmt"/>
-        <line num="6" count="1" type="stmt"/>
-        <line num="27" count="1" type="stmt"/>
-        <line num="32" count="0" type="stmt"/>
-        <line num="33" count="0" type="stmt"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="27" count="2" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
         <line num="39" count="1" type="stmt"/>
         <line num="40" count="1" type="stmt"/>
         <line num="41" count="1" type="stmt"/>
@@ -27,11 +27,11 @@
         <line num="68" count="0" type="stmt"/>
         <line num="69" count="0" type="stmt"/>
         <line num="74" count="1" type="stmt"/>
-        <line num="75" count="1" type="stmt"/>
-        <line num="77" count="1" type="stmt"/>
+        <line num="75" count="2" type="stmt"/>
+        <line num="77" count="2" type="stmt"/>
         <line num="80" count="1" type="stmt"/>
-        <line num="82" count="0" type="stmt"/>
-        <line num="83" count="0" type="stmt"/>
+        <line num="82" count="1" type="stmt"/>
+        <line num="83" count="1" type="stmt"/>
         <line num="87" count="1" type="stmt"/>
         <line num="88" count="0" type="stmt"/>
         <line num="89" count="0" type="stmt"/>
@@ -42,11 +42,11 @@
         <line num="109" count="0" type="stmt"/>
         <line num="111" count="0" type="stmt"/>
         <line num="115" count="1" type="stmt"/>
-        <line num="116" count="0" type="stmt"/>
-        <line num="118" count="0" type="stmt"/>
-        <line num="121" count="0" type="stmt"/>
-        <line num="123" count="0" type="stmt"/>
-        <line num="124" count="0" type="stmt"/>
+        <line num="116" count="2" type="stmt"/>
+        <line num="118" count="2" type="stmt"/>
+        <line num="121" count="1" type="stmt"/>
+        <line num="123" count="1" type="stmt"/>
+        <line num="124" count="1" type="stmt"/>
         <line num="128" count="1" type="stmt"/>
         <line num="129" count="1" type="stmt"/>
         <line num="130" count="1" type="stmt"/>
