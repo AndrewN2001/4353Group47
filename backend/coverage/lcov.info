@@ -1,5 +1,5 @@
 TN:
-SF:controllers\event_controller.js
+SF:controllers/event_controller.js
 FN:30,(anonymous_0)
 FN:42,(anonymous_1)
 FN:53,(anonymous_2)
@@ -42,7 +42,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:controllers\user_controller.js
+SF:controllers/user_controller.js
 FN:5,(anonymous_0)
 FN:39,(anonymous_1)
 FN:74,(anonymous_2)
@@ -171,7 +171,7 @@ BRF:14
 BRH:13
 end_of_record
 TN:
-SF:global_arrays\data.js
+SF:global_arrays/data.js
 FNF:0
 FNH:0
 DA:1,4
@@ -183,7 +183,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:models\event.js
+SF:models/event.js
 FN:39,(anonymous_0)
 FNF:1
 FNH:1
@@ -198,7 +198,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:models\user.js
+SF:models/user.js
 FNF:0
 FNH:0
 DA:1,4
@@ -210,7 +210,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:routes\event_actions.js
+SF:routes/event_actions.js
 FNF:0
 FNH:0
 DA:1,1
@@ -224,7 +224,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:routes\user_actions.js
+SF:routes/user_actions.js
 FNF:0
 FNH:0
 DA:1,1
