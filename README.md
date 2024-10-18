@@ -24,6 +24,9 @@ To use Voluntify, follow these steps:
 1. Open the project to the correct directory as listed in *Installation*
 2. Start the project: **`npm start`** for frontend and **`node index.js`** for backend
 
+## **Testing Coverage Report**
+- Located in **`backend/coverage/lcov-report/index.html`**
+
 ## **Troubleshooting**
 
 1. The main solution for backend running is to remove the node_modules folder from the directory and reinstall:
