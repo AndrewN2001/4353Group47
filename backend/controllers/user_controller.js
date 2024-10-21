@@ -102,7 +102,47 @@ const handleNotifications = async (req, res) => {
         console.error("Something went wrong", error);
         res.status(500).json({ message: "Something went wrong" });
     }
-} 
+}
+
+const addSkill = async (req, res) => {
+    const { userID } = req.params;
+    const { newSkill } = req.body;
+    console.log("Skill to add:", newSkill)
+    console.log("ID to add the skill to:", userID);
+    try{
+        const user = await userModel.findById(userID);
+        if (!user){
+            return res.status(404).json({message: "User not found."})
+        }
+        if (!user.skills.includes(newSkill)){
+            user.skills.push(newSkill);
+        }
+        await user.save();
+        res.status(200).json(user.skills);
+    } catch (error) {
+        console.error("Something went wrong", error);
+        res.status(500).json({ message: "Something went wrong" });
+    }
+}
+
+const removeSkill = async (req, res) => {
+    try{
+        const { userID, skill } = req.params;
+        console.log("Skill to remove:", skill);
+        const user = await userModel.findByIdAndUpdate(
+            userID,
+            { $pull: { skills: skill } },
+            { new: true } 
+        );
+        if (!user) {
+            return res.status(404).json({message: "User not found"})
+        }
+        res.json({message: "Skill removed", user});
+    } catch (error) {
+        console.error("Something went wrong", error);
+        res.status(500).json({ message: "Something went wrong" });
+    }
+}
 
 const getVolunteerHistory = async (req, res) => {
     try {
@@ -148,7 +188,6 @@ const handleMatching = async (req, res) => {
                         }
                     }
                 });
-
                 matches.push(volunteerMatches);
             }
         });
@@ -206,5 +245,7 @@ module.exports = {
     handleMatching,
     getData,
     EventSignUp,
-    getEvents
+    getEvents,
+    addSkill,
+    removeSkill
 }

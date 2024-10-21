@@ -11,5 +11,7 @@ router.get('/volunteer-matching', userController.handleMatching);
 router.get('/data', userController.getData);
 router.post('/eventapply', userController.EventSignUp);
 router.get('/eventsattending', userController.getEvents);
+router.put('/:userID/addSkill', userController.addSkill);
+router.delete('/:userID/removeSkill/:skill', userController.removeSkill);
 
 module.exports = router;

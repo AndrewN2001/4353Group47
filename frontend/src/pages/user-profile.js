@@ -14,15 +14,16 @@ export default function UserProfile() {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [updateInfo, setUpdateInfo] = useState(false);
+    const [newSkill, setNewSkill] = useState('');
+    const [skills, setSkills] = useState([]);
     const {loggedUser, logout, setAdmin} = useAuth();
 
     useEffect(() => {
         const userId = loggedUser.userID; // Replace with actual user ID when DB is connected
-        // console.log(loggedUser.userID);
         axios.get(`http://localhost:3001/api/users/profile/${userId}`)
             .then(response => {
+                setSkills(response.data.skills);
                 setUserData(response.data);
-                console.log(response.data);
                 if (response.data.role === "Admin"){
                     setAdmin(true);
                 } else{
@@ -36,6 +37,34 @@ export default function UserProfile() {
                 setLoading(false);
             })
     }, []);
+
+    const handleAddSkill = async () => {
+        const userID = loggedUser.userID;
+        console.log("New skill to be added:", newSkill);
+        try{
+            axios.put(`http://localhost:3001/api/users/${userID}/addSkill`, {newSkill})
+            .then(response => {
+                setSkills((prevSkills) => [...prevSkills, newSkill]);
+                setNewSkill('')
+            })
+        } catch (error) {
+            console.error("Error adding skill:", error);
+        }
+    }
+
+    const handleRemoveSkill = async (skill) => {
+        const userID = loggedUser.userID;
+        console.log("Skill to be removed:", skill)
+        try{
+            axios.delete(`http://localhost:3001/api/users/${userID}/removeSkill/${skill}`)
+            .then(response => {
+                console.log(response);
+                setSkills(prevSkills => prevSkills.filter(s => s !== skill)) // filters out by returning every skill that's not the removed skill
+            })
+        } catch (error) {
+            console.error("Error adding skill:", error);
+        }
+    }
 
     const handleLogOut = () => {
         logout();
@@ -218,8 +247,12 @@ export default function UserProfile() {
                                     </h1>
 
                                     <div className="flex gap-2">
-                                        <input className="bg-gray-300 pr-10 pl-2 py-1 placeholder-black" placeholder="Create a new skill..."/>
-                                        <button className="bg-gray-400 hover:bg-gray-500 px-3 py-1 rounded-md">
+                                        <input 
+                                            className="bg-gray-300 pr-10 pl-2 py-1 placeholder-black" 
+                                            placeholder="Create a new skill..."
+                                            onChange={(e) => setNewSkill(e.target.value)}
+                                        />
+                                        <button className="bg-gray-400 hover:bg-gray-500 px-3 py-1 rounded-md" onClick={handleAddSkill}>
                                             Add Skill
                                         </button>
                                     </div>
@@ -227,13 +260,15 @@ export default function UserProfile() {
 
                                 <div className="w-full bg-gray-300 min-h-60 rounded-sm p-3">
                                     <ul className="flex gap-3">
-                                        {userData.skills.map((skill, index) => (
-                                            <li key={index} className="px-3 py-2 bg-gray-400 text-black rounded-md">
+                                        {skills.map((skill, index) => (
+                                            <li key={index} className="px-3 py-2 bg-gray-400 text-black rounded-md flex items-center gap-3">
                                                 {skill}
+                                                <button className="hover:bg-gray-300 rounded-full" onClick={() => handleRemoveSkill(skill)}>
+                                                    <IoClose className="text-sm"/>
+                                                </button>
                                             </li>
                                         ))}
                                     </ul>
-
                                 </div>
                             </div>
 

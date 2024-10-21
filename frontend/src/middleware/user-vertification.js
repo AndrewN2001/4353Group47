@@ -20,7 +20,7 @@ export const AuthProvider = ({children}) => {
         const storedUser = localStorage.getItem("loggedUser")
         const storedAdmin = localStorage.getItem("isAdmin");
         if (storedUser) {
-            console.log(storedUser);
+            // console.log(storedUser);
             const user = JSON.parse(storedUser);
             setLoggedUser({
                 name: user.name,
