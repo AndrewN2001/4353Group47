@@ -28,19 +28,13 @@ export default function NavBar(){
                             Events
                         </a>
                     </li>
-
-                    <li>
-                        <button className="px-2 hover:underline hover:underline-offset-4">
-                            Opportunities
-                        </button>
-                    </li>
                 </ul>
             </div>
             
             {isLoggedIn ? (
                 <div className="flex gap-3 items-center">
                     <h1 id="name">
-                        Welcome, {loggedUser}
+                        Welcome, {loggedUser.name}
                     </h1>
                     <a className="w-9 h-9 rounded-full bg-white" href="/userprofile">
                         

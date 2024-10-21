@@ -19,7 +19,7 @@ const eventSchema = new mongoose.Schema({
             required: true
         }
     },
-    requiredSkills:{
+    requiredSkills: {
         type: [String],
         required: true
     },
@@ -41,7 +41,11 @@ const eventSchema = new mongoose.Schema({
             },
             message: "End date must be after the start date."
         }
-    }
+    },
+    attendees: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users'
+    }]
 })
 
 module.exports = mongoose.model("Event", eventSchema);

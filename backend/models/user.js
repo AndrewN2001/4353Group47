@@ -1,5 +1,16 @@
 const mongoose = require("mongoose");
 
+const availabilitySchema = new mongoose.Schema({
+    start: {
+        type: String,
+        default: "N/A",
+    },
+    end: {
+        type: String,
+        default: "N/A",
+    }
+})
+
 const userSchema = new mongoose.Schema({
     name: {
         firstName: {
@@ -27,11 +38,19 @@ const userSchema = new mongoose.Schema({
         enum: ['user', 'manager', 'admin'],
         default: 'user'
     },
+    imageUrl: {
+        type: String,
+        default: ""
+    },
     phoneNumber: {
         type: String,
         required: true,
         match: [/^\d{10}$/, 'Please enter a valid 10-digit phone number'] // Simple phone validation
     }, 
+    skills:{
+        type: [String],
+        default: []
+    },
     emailAddress: {
         type: String,
         required: true,
@@ -55,6 +74,61 @@ const userSchema = new mongoose.Schema({
             type: Boolean,
             default: true
         }
+    },
+    attendedEvents: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Event'
+    }],
+    availability: {
+        monday: {
+            type: availabilitySchema,
+            default: {
+                start: "N/A",
+                end: "N/A"
+            }
+        },
+        tuesday: {
+            type: availabilitySchema,
+            default: {
+                start: "N/A",
+                end: "N/A"
+            }
+        },
+        wednesday: {
+            type: availabilitySchema,
+            default: {
+                start: "N/A",
+                end: "N/A"
+            }
+        },
+        thursday: {
+            type: availabilitySchema,
+            default: {
+                start: "N/A",
+                end: "N/A"
+            }
+        },
+        friday: {
+            type: availabilitySchema,
+            default: {
+                start: "N/A",
+                end: "N/A"
+            }
+        },
+        saturday: {
+            type: availabilitySchema,
+            default: {
+                start: "N/A",
+                end: "N/A"
+            }
+        },
+        sunday: {
+            type: availabilitySchema,
+            default: {
+                start: "N/A",
+                end: "N/A"
+            }
+        },
     }
 })
 

@@ -81,7 +81,7 @@ const VolunteerMatching = () => {
                 <div className="flex justify-center">
                     <button
                         onClick={handleCreateMatches}
-                        className="bg-blue-600 text-white font-semibold py-3 px-8 rounded hover:bg-blue-700"
+                        className="bg-primaryblue text-white font-semibold py-3 px-8 rounded hover:bg-primaryblue-light"
                     >
                         Create Matches
                     </button>

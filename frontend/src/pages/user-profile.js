@@ -13,10 +13,12 @@ export default function UserProfile() {
     const [selectedPage, setSelected] = useState("dashboard")
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const {logout, setAdmin} = useAuth();
+    const [updateInfo, setUpdateInfo] = useState(false);
+    const {loggedUser, logout, setAdmin} = useAuth();
 
     useEffect(() => {
-        const userId = "someUserId"; // Replace with actual user ID when DB is connected
+        const userId = loggedUser.userID; // Replace with actual user ID when DB is connected
+        // console.log(loggedUser.userID);
         axios.get(`http://localhost:3001/api/users/profile/${userId}`)
             .then(response => {
                 setUserData(response.data);
@@ -38,6 +40,26 @@ export default function UserProfile() {
     const handleLogOut = () => {
         logout();
         navigate('/');
+    }
+    
+    const toggleUpdateInfo = () => {
+        setUpdateInfo(prevState => !prevState);
+    }
+
+    const handleNameChange = (e) =>{
+
+    }
+
+    const handleLocationChange = (e) =>{
+        
+    }
+
+    const handleEmailChange = (e) =>{
+        
+    }
+
+    const handleNumberChange = (e) =>{
+        
     }
 
     const days = [
@@ -67,7 +89,7 @@ export default function UserProfile() {
 
                             <div className="text-center">
                                 <h1 className="text-4xl text-nowrap">
-                                    {userData.name}
+                                    {userData.name.firstName + " " + userData.name.lastName}
                                 </h1>
                                 <h2 className="mt-2 text-lg">
                                     {userData.role}
@@ -120,7 +142,16 @@ export default function UserProfile() {
                                                 Full Name
                                             </h1>
                                             <h1 className="font-light">
-                                                {userData.name}
+                                                {updateInfo ? (
+                                                    <input
+                                                        type="text"
+                                                        value={userData.name.firstName + " " + userData.name.lastName}
+                                                        className="text-right"
+                                                        onChange={handleNameChange}
+                                                    />
+                                                ) : (
+                                                    userData.name.firstName + " " + userData.name.lastName
+                                                )}
                                             </h1>
                                         </li>
                                         <li className="border-b-2 h-10 flex items-center gap-20 justify-between">
@@ -128,7 +159,16 @@ export default function UserProfile() {
                                                 Location
                                             </h1>
                                             <h1 className="font-light">
-                                                {userData.location.city + ", " + userData.location.state}
+                                                {updateInfo ? (
+                                                    <input
+                                                        type="text"
+                                                        value={userData.location.city + " " + userData.location.state}
+                                                        className="text-right"
+                                                        onChange={handleLocationChange}
+                                                    />
+                                                ) : (
+                                                    userData.location.city + ", " + userData.location.state
+                                                )}
                                             </h1>
                                         </li>
                                         <li className="border-b-2 h-10 flex items-center gap-20 justify-between">
@@ -136,7 +176,16 @@ export default function UserProfile() {
                                                 Email
                                             </h1>
                                             <h1 className="font-light">
-                                                {userData.email}
+                                                {updateInfo ? (
+                                                    <input
+                                                        type="text"
+                                                        value={userData.emailAddress}
+                                                        className="text-right w-72"
+                                                        onChange={handleEmailChange}
+                                                    />
+                                                ) : (
+                                                    userData.emailAddress
+                                                )}
                                             </h1>
                                         </li>
                                         <li className="border-b-2 h-10 flex items-center gap-20 justify-between">
@@ -144,12 +193,21 @@ export default function UserProfile() {
                                                 Phone Number
                                             </h1>
                                             <h1 className="font-light">
-                                                {userData.phoneNumber}
+                                                {updateInfo ? (
+                                                    <input
+                                                        type="text"
+                                                        value={userData.phoneNumber}
+                                                        className="text-right"
+                                                        onChange={handleNumberChange}
+                                                    />
+                                                ) : (
+                                                    userData.phoneNumber
+                                                )}
                                             </h1>
                                         </li>
                                     </ul>
-                                    <button className="mt-7 py-2 px-8 bg-primaryblue hover:bg-primaryblue-light text-white font-semibold shadow-md rounded-sm">
-                                        Edit
+                                    <button className="mt-7 py-2 px-8 bg-primaryblue hover:bg-primaryblue-light text-white font-semibold shadow-md rounded-sm" onClick={toggleUpdateInfo}>
+                                        {updateInfo ? "Save" : "Edit"}
                                     </button>
                                 </div>
                             </div>
@@ -158,17 +216,24 @@ export default function UserProfile() {
                                     <h1 className="text-4xl">
                                         Skills
                                     </h1>
-                                    <input placeholder="Search for a Skill:" className="h-10 pl-3 pr-36 bg-gray-200" />
+
+                                    <div className="flex gap-2">
+                                        <input className="bg-gray-300 pr-10 pl-2 py-1 placeholder-black" placeholder="Create a new skill..."/>
+                                        <button className="bg-gray-400 hover:bg-gray-500 px-3 py-1 rounded-md">
+                                            Add Skill
+                                        </button>
+                                    </div>
                                 </div>
 
-                                <div className="w-full bg-gray-300 min-h-60">
-                                    <ul className="flex pl-3 pt-3 gap-3">
+                                <div className="w-full bg-gray-300 min-h-60 rounded-sm p-3">
+                                    <ul className="flex gap-3">
                                         {userData.skills.map((skill, index) => (
                                             <li key={index} className="px-3 py-2 bg-gray-400 text-black rounded-md">
                                                 {skill}
                                             </li>
                                         ))}
                                     </ul>
+
                                 </div>
                             </div>
 
@@ -199,6 +264,9 @@ export default function UserProfile() {
                                         </li>
                                     ))}
                                 </ul>
+                                <button className="mt-7 py-2 px-8 w-min bg-primaryblue hover:bg-primaryblue-light text-white font-semibold shadow-md rounded-sm">
+                                    Edit
+                                </button>
                             </div>
                         </div>
                     )}

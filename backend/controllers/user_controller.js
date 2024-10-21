@@ -9,10 +9,11 @@ const handleLogin = async (req, res) => {
         if (searchUser) {
             const valid = await bcrypt.compare(password, searchUser.password);
             if (valid){
-                res.json({
-                    message: "login successful!",
-                    username: searchUser.username,
-                })
+                // res.json({
+                //     message: "login successful!",
+                //     username: searchUser.username,
+                // })
+                res.json(searchUser);
             } else {
                 res.status(400).json({message: "Invalid password."})
             }
@@ -59,11 +60,15 @@ const handleRegister = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
     try {
-        // For now, use a hardcoded user profile (replace with MongoDB query later)
-        const userId = req.params.userId; // userId for when needed by DB later
-
+        const userID = req.params.userID; // userId for when needed by DB later
+        const userProfile = await userModel.findById(userID);
+        if (!userProfile){
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
         // Respond with the hardcoded user profile
-        res.json(volunteers[0]);
+        res.json(userProfile);        
     } catch (error) {
         console.error("Error fetching user profile:", error);
         res.status(500).json({ message: "Server Error" });
@@ -121,16 +126,12 @@ const handleMatching = async (req, res) => {
             const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
             return days[date.getDay()];
         };
-
         volunteers.forEach(volunteer => {
             if (volunteer.role === "Volunteer") {
                 let volunteerMatches = {
                     volunteerName: volunteer.name,
                     matchedEvents: []
                 };
-
-
-
                 events.forEach(event => {
                     const eventDay = getDayOfWeek(event.eventDate);
                     if (volunteer.location.city === event.location.city &&
@@ -169,7 +170,6 @@ const getData = async (req, res) => {
         console.error("Error fetching data:", error);
         res.status(500).json({ message: "Server Error" });
     }
-
 }
 
 
