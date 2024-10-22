@@ -13,5 +13,6 @@ router.post('/eventapply', userController.EventSignUp);
 router.get('/eventsattending', userController.getEvents);
 router.put('/:userID/addSkill', userController.addSkill);
 router.delete('/:userID/removeSkill/:skill', userController.removeSkill);
+router.put('/:userID/editInfo', userController.editUserInfo)
 
 module.exports = router;

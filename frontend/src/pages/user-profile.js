@@ -10,18 +10,29 @@ import { useNavigate } from "react-router-dom";
 
 export default function UserProfile() {
     const navigate = useNavigate();
+    const {loggedUser, logout, setAdmin} = useAuth();
+
+    // list of states, needs to be reduced using the hook useReducer
     const [selectedPage, setSelected] = useState("dashboard")
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [updateInfo, setUpdateInfo] = useState(false);
+    const [updateInfo, setUpdateInfo] = useState(false); // toggle for the button
     const [newSkill, setNewSkill] = useState('');
-    const [skills, setSkills] = useState([]);
-    const {loggedUser, logout, setAdmin} = useAuth();
+    const [currentUserInfo, setCurrentInfo] = useState({})
+    const [skills, setSkills] = useState([]); // currentSkills
+    const [newValues, setNewValues] = useState({}); // list of new userInfo
 
     useEffect(() => {
         const userId = loggedUser.userID; // Replace with actual user ID when DB is connected
         axios.get(`http://localhost:3001/api/users/profile/${userId}`)
             .then(response => {
+                console.log(response.data);
+                setCurrentInfo({
+                    name: response.data.name,
+                    location: response.data.location,
+                    emailAddress: response.data.emailAddress,
+                    phoneNumber: response.data.phoneNumber
+                })
                 setSkills(response.data.skills);
                 setUserData(response.data);
                 if (response.data.role === "Admin"){
@@ -75,20 +86,59 @@ export default function UserProfile() {
         setUpdateInfo(prevState => !prevState);
     }
 
-    const handleNameChange = (e) =>{
+    const handleInfoChange = async (field, newInfo) =>{
+        console.log("Field to be updated:", field);
+        
+        setNewValues((prevData) => {
+            switch (field){
+                case "name":
+                    console.log("New Name to be added: ", newInfo);
+                    const [firstName, lastName] = newInfo.split(" ");
+                    return {
+                        ...prevData,
+                        name: {firstName, lastName}
+                    }
+                case "location":
+                    console.log("New location to be added: ", newInfo);
+                    const [city, state] = newInfo.split(" ");
+                    return {
+                        ...prevData,
+                        location: {city, state}
+                    }
+                case "emailAddress":
+                    console.log("New email to be added: ", newInfo);
+                    return{
+                        ...prevData,
+                        emailAddress: newInfo
+                    }
+                case "phoneNumber":
+                    console.log("New phone number to be added: ", newInfo)
+                    return{
+                        ...prevData,
+                        emailAddress: newInfo
+                    }
+                default:
+                    return prevData;
+            }
+        })
 
+        console.log("Info to be updated:", newValues);
     }
 
-    const handleLocationChange = (e) =>{
-        
-    }
-
-    const handleEmailChange = (e) =>{
-        
-    }
-
-    const handleNumberChange = (e) =>{
-        
+    const submitInfoChange = async () => {
+        const userID = loggedUser.userID;
+        // console.log(newInfo, userID);
+        axios.put(`http://localhost:3001/api/users/${userID}/editInfo`, {newValues})
+        .then(response => {
+            console.log(response);
+            setCurrentInfo({
+                name: response.data.name,
+                location: response.data.location,
+                emailAddress: response.data.emailAddress,
+                phoneNumber: response.data.phoneNumber
+            })
+        })
+        setUpdateInfo(false);
     }
 
     const days = [
@@ -118,7 +168,7 @@ export default function UserProfile() {
 
                             <div className="text-center">
                                 <h1 className="text-4xl text-nowrap">
-                                    {userData.name.firstName + " " + userData.name.lastName}
+                                    {currentUserInfo.name.firstName + " " + currentUserInfo.name.lastName}
                                 </h1>
                                 <h2 className="mt-2 text-lg">
                                     {userData.role}
@@ -174,12 +224,12 @@ export default function UserProfile() {
                                                 {updateInfo ? (
                                                     <input
                                                         type="text"
-                                                        value={userData.name.firstName + " " + userData.name.lastName}
+                                                        placeholder="Enter new name:"
                                                         className="text-right"
-                                                        onChange={handleNameChange}
+                                                        onChange={(e) => handleInfoChange("name", e.target.value)}
                                                     />
                                                 ) : (
-                                                    userData.name.firstName + " " + userData.name.lastName
+                                                    currentUserInfo.name.firstName + " " + currentUserInfo.name.lastName
                                                 )}
                                             </h1>
                                         </li>
@@ -191,12 +241,12 @@ export default function UserProfile() {
                                                 {updateInfo ? (
                                                     <input
                                                         type="text"
-                                                        value={userData.location.city + " " + userData.location.state}
+                                                        placeholder="Enter new location:"
                                                         className="text-right"
-                                                        onChange={handleLocationChange}
+                                                        onChange={(e) => handleInfoChange("location", e.target.value)}
                                                     />
                                                 ) : (
-                                                    userData.location.city + ", " + userData.location.state
+                                                    currentUserInfo.location.city + ", " + currentUserInfo.location.state
                                                 )}
                                             </h1>
                                         </li>
@@ -208,12 +258,12 @@ export default function UserProfile() {
                                                 {updateInfo ? (
                                                     <input
                                                         type="text"
-                                                        value={userData.emailAddress}
+                                                        placeholder="Enter new email address:"
                                                         className="text-right w-72"
-                                                        onChange={handleEmailChange}
+                                                        onChange={(e) => handleInfoChange("emailAddress", e.target.value)}
                                                     />
                                                 ) : (
-                                                    userData.emailAddress
+                                                    currentUserInfo.emailAddress
                                                 )}
                                             </h1>
                                         </li>
@@ -225,17 +275,17 @@ export default function UserProfile() {
                                                 {updateInfo ? (
                                                     <input
                                                         type="text"
-                                                        value={userData.phoneNumber}
+                                                        placeholder="Enter new phone number:"
                                                         className="text-right"
-                                                        onChange={handleNumberChange}
+                                                        onChange={(e) => handleInfoChange("phoneNumber", e.target.value)}
                                                     />
                                                 ) : (
-                                                    userData.phoneNumber
+                                                    currentUserInfo.phoneNumber
                                                 )}
                                             </h1>
                                         </li>
                                     </ul>
-                                    <button className="mt-7 py-2 px-8 bg-primaryblue hover:bg-primaryblue-light text-white font-semibold shadow-md rounded-sm" onClick={toggleUpdateInfo}>
+                                    <button className="mt-7 py-2 px-8 bg-primaryblue hover:bg-primaryblue-light text-white font-semibold shadow-md rounded-sm" onClick={updateInfo ? submitInfoChange : toggleUpdateInfo}>
                                         {updateInfo ? "Save" : "Edit"}
                                     </button>
                                 </div>

@@ -75,7 +75,7 @@ const getUserProfile = async (req, res) => {
     }
 }
 
-const handleNotifications = async (req, res) => {
+const handleNotifications = async (req, res) => { // edits notification settings for user
     try {
         const { userID } = req.params; // email will need to be passed through the route
         const { newEventAssignments, newEventUpdates, newEventReminders } = req.body;
@@ -107,8 +107,8 @@ const handleNotifications = async (req, res) => {
 const addSkill = async (req, res) => {
     const { userID } = req.params;
     const { newSkill } = req.body;
-    console.log("Skill to add:", newSkill)
-    console.log("ID to add the skill to:", userID);
+    // console.log("Skill to add:", newSkill)
+    // console.log("ID to add the skill to:", userID);
     try{
         const user = await userModel.findById(userID);
         if (!user){
@@ -128,7 +128,7 @@ const addSkill = async (req, res) => {
 const removeSkill = async (req, res) => {
     try{
         const { userID, skill } = req.params;
-        console.log("Skill to remove:", skill);
+        // console.log("Skill to remove:", skill);
         const user = await userModel.findByIdAndUpdate(
             userID,
             { $pull: { skills: skill } },
@@ -144,7 +144,7 @@ const removeSkill = async (req, res) => {
     }
 }
 
-const getVolunteerHistory = async (req, res) => {
+const getVolunteerHistory = async (req, res) => { // gets 
     try {
         // For now, use hardcoded events (replace with MongoDB query later)
         const userId = req.params.userId;
@@ -201,7 +201,7 @@ const handleMatching = async (req, res) => {
 }
 
 
-const getData = async (req, res) => {
+const getData = async (req, res) => { // gets all available events and volunteers
     try {
         const userId = req.params.userId;
         res.json({ events, volunteers });
@@ -212,7 +212,7 @@ const getData = async (req, res) => {
 }
 
 
-const EventSignUp = async (req, res) => {
+const EventSignUp = async (req, res) => { // called when user signs up for specific event and adds it to their appliedEvents field
     try{
         const userId = req.params.userId;
         res.json(req.body);
@@ -224,7 +224,7 @@ const EventSignUp = async (req, res) => {
     }
 }
 
-const getEvents = async(req, res) => {
+const getEvents = async(req, res) => { // would get every event that the user signed up for
     try{
         const userId = req.params.userId;
         res.json(volunteers[0].appliedEvents);
@@ -232,6 +232,30 @@ const getEvents = async(req, res) => {
         console.error("Error fetching data:", error);
         res.status(500).json({
             message: "Server Error",
+        })
+    }
+}
+
+const editUserInfo = async (req, res) => {
+    try{
+        const { userID } = req.params;
+        const { newValues } = req.body;
+        // console.log(userID, newValues);
+        // res.json("Received");
+        const updatedUser = await userModel.findByIdAndUpdate(
+            userID,
+            {$set: newValues},
+            {new: true, runValidators: true}
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({message: "User not found."});
+        }
+        res.status(200).json(updatedUser);
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        res.status(500).json({
+            message: "Server Error"
         })
     }
 }
@@ -247,5 +271,6 @@ module.exports = {
     EventSignUp,
     getEvents,
     addSkill,
-    removeSkill
+    removeSkill,
+    editUserInfo
 }
