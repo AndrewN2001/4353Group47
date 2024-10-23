@@ -5,18 +5,19 @@ import axios from "axios";
 
 export default function Events(){
     const [attendEvents, setAttendEvents] = useState([]);
-    const {isAdmin} = useAuth();
+    const {loggedUser, isAdmin} = useAuth();
     const [volunteerData, setVolunteerData] = useState([]);
     const [openIndex, setOpenIndex] = useState(null);
 
     useEffect(() => {
-        const userId = "someUserId"; // Replace with actual user ID when DB is connected
+        const userID = loggedUser.userID; // Replace with actual user ID when DB is connected
         axios.all([
             axios.get("http://localhost:3001/api/users/eventsattending"),
-            axios.get(`http://localhost:3001/api/users/volunteer-history/${userId}`)
+            axios.get(`http://localhost:3001/api/users/volunteer-history/${userID}`)
         ])
         .then(axios.spread((eventsResponse, historyResponse) => {
             setAttendEvents(eventsResponse.data);
+            
             setVolunteerData(historyResponse.data);
         }))
         .catch(error => {
@@ -131,7 +132,7 @@ export default function Events(){
                                         <td colSpan="3" className="bg-gray-300">
                                             <div className="p-4">
                                                 <p><strong>Event Description:</strong> {event.eventDescription}</p>
-                                                <p><strong>Location:</strong> {event.location}</p>
+                                                <p><strong>Location:</strong> {event.location.city}</p>
                                                 <p><strong>Required Skills:</strong> {event.requiredSkills}</p>
                                                 <p><strong>Urgency:</strong> {event.urgency}</p>
                                                 <p><strong>Event Date:</strong> {event.eventDate}</p>

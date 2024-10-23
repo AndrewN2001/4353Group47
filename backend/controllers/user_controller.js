@@ -162,13 +162,29 @@ const removeSkill = async (req, res) => {
     }
 }
 
-const getVolunteerHistory = async (req, res) => { // gets 
-    try {
-        // For now, use hardcoded events (replace with MongoDB query later)
-        const userId = req.params.userId;
+// const getVolunteerHistory = async (req, res) => { // gets 
+//     try {
+//         // For now, use hardcoded events (replace with MongoDB query later)
+//         const userId = req.params.userId;
 
-        // Respond with the hardcoded volunteer history
-        res.json(events);
+//         // Respond with the hardcoded volunteer history
+//         res.json(events);
+//     } catch (error) {
+//         console.error("Error fetching volunteer history:", error);
+//         res.status(500).json({ message: "Server Error" });
+//     }
+// }
+const getVolunteerHistory = async (req, res) => {
+    try {
+        const userID = req.params.userID;
+        // Find the user by ID and populate the attendedEvents array
+        const user = await userModel.findById(userID).populate("attendedEvents");
+        if (!user) {
+            return res.status(404).json({ 
+                message: "User not found" 
+            });
+        }
+        res.json(user.attendedEvents);
     } catch (error) {
         console.error("Error fetching volunteer history:", error);
         res.status(500).json({ message: "Server Error" });
