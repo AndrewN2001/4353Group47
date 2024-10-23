@@ -260,6 +260,32 @@ const editUserInfo = async (req, res) => {
     }
 }
 
+const editAvailability = async (req, res) => {
+    try{
+        const { userID } = req.params;
+        const { key, start, end } = req.body.dayData;
+        const newAvailability = {
+            start: start,
+            end: end
+        }
+        const updatedUser = await userModel.findByIdAndUpdate(
+            userID,
+            {$set: {[`availability.${key}`]: newAvailability}},
+            {new: true}
+        )
+
+        if (!updatedUser){
+            return res.status(404).json({message: "User not found."});
+        }
+        res.status(200).json(updatedUser);
+    } catch (error) {
+        console.error('Error fetching data', error);
+        res.status(500).json({
+            message: "Server error"
+        })
+    }
+}
+
 module.exports = {
     handleLogin,
     handleRegister,
@@ -272,5 +298,6 @@ module.exports = {
     getEvents,
     addSkill,
     removeSkill,
-    editUserInfo
+    editUserInfo,
+    editAvailability
 }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { BsPersonFill } from "react-icons/bs";
 import { IoIosNotifications } from "react-icons/io";
 import { IoClose, IoCalendarClear } from "react-icons/io5";
+import { MdOutlineModeEdit, MdOutlineCheck } from "react-icons/md";
 import Notifications from "../components/notifications";
 import Events from "../components/my-events";
 import axios from "axios"
@@ -14,25 +15,29 @@ export default function UserProfile() {
 
     // list of states, needs to be reduced using the hook useReducer
     const [selectedPage, setSelected] = useState("dashboard")
-    const [userData, setUserData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [userData, setUserData] = useState(null); // loads user data
+    const [loading, setLoading] = useState(true); // makes the page wait until everything is rendered
     const [updateInfo, setUpdateInfo] = useState(false); // toggle for the button
-    const [newSkill, setNewSkill] = useState('');
-    const [currentUserInfo, setCurrentInfo] = useState({})
+    const [newSkill, setNewSkill] = useState(''); // contains the skill to be added
+    const [currentUserInfo, setCurrentInfo] = useState({}) // loads the current user info
     const [skills, setSkills] = useState([]); // currentSkills
     const [newValues, setNewValues] = useState({}); // list of new userInfo
+    const [newAvail, setNewAvail] = useState([]);
+    const [toggleAvail, setToggleAvail] = useState(null);
+    const [currentUserAvail, setCurrentAvail] = useState({});
 
     useEffect(() => {
         const userId = loggedUser.userID; // Replace with actual user ID when DB is connected
         axios.get(`http://localhost:3001/api/users/profile/${userId}`)
             .then(response => {
-                console.log(response.data);
+                // console.log(response.data);
                 setCurrentInfo({
                     name: response.data.name,
                     location: response.data.location,
                     emailAddress: response.data.emailAddress,
                     phoneNumber: response.data.phoneNumber
                 })
+                setCurrentAvail(response.data.availability);
                 setSkills(response.data.skills);
                 setUserData(response.data);
                 if (response.data.role === "Admin"){
@@ -51,7 +56,6 @@ export default function UserProfile() {
 
     const handleAddSkill = async () => {
         const userID = loggedUser.userID;
-        console.log("New skill to be added:", newSkill);
         try{
             axios.put(`http://localhost:3001/api/users/${userID}/addSkill`, {newSkill})
             .then(response => {
@@ -65,7 +69,6 @@ export default function UserProfile() {
 
     const handleRemoveSkill = async (skill) => {
         const userID = loggedUser.userID;
-        console.log("Skill to be removed:", skill)
         try{
             axios.delete(`http://localhost:3001/api/users/${userID}/removeSkill/${skill}`)
             .then(response => {
@@ -86,33 +89,27 @@ export default function UserProfile() {
         setUpdateInfo(prevState => !prevState);
     }
 
-    const handleInfoChange = async (field, newInfo) =>{
-        console.log("Field to be updated:", field);
-        
+    const handleInfoChange = async (field, newInfo) => {
         setNewValues((prevData) => {
             switch (field){
                 case "name":
-                    console.log("New Name to be added: ", newInfo);
                     const [firstName, lastName] = newInfo.split(" ");
                     return {
                         ...prevData,
                         name: {firstName, lastName}
                     }
                 case "location":
-                    console.log("New location to be added: ", newInfo);
                     const [city, state] = newInfo.split(" ");
                     return {
                         ...prevData,
                         location: {city, state}
                     }
                 case "emailAddress":
-                    console.log("New email to be added: ", newInfo);
                     return{
                         ...prevData,
                         emailAddress: newInfo
                     }
                 case "phoneNumber":
-                    console.log("New phone number to be added: ", newInfo)
                     return{
                         ...prevData,
                         emailAddress: newInfo
@@ -121,8 +118,6 @@ export default function UserProfile() {
                     return prevData;
             }
         })
-
-        console.log("Info to be updated:", newValues);
     }
 
     const submitInfoChange = async () => {
@@ -130,7 +125,7 @@ export default function UserProfile() {
         // console.log(newInfo, userID);
         axios.put(`http://localhost:3001/api/users/${userID}/editInfo`, {newValues})
         .then(response => {
-            console.log(response);
+            // console.log(response);
             setCurrentInfo({
                 name: response.data.name,
                 location: response.data.location,
@@ -139,6 +134,38 @@ export default function UserProfile() {
             })
         })
         setUpdateInfo(false);
+    }
+
+    const handleAvailability = async (day, type, value) => { // ex. (sunday, "start", 8:00)
+        setToggleAvail(day);
+        setNewAvail((prev) => {
+            const existingDay = prev.find(item => item.key === day); // checks to see if that day is already entered in
+            if (existingDay){
+                return prev.map(item => item.key === day ? {...item, [type]: value} : item)
+            } else{
+                return [
+                    ...prev,
+                    {key: day.toLowerCase(), [type]: value}
+                ]
+            }
+        })
+    }
+
+    const submitAvailability = async (day) => {
+        const userID = loggedUser.userID;
+        const dayData = newAvail.find(item => item.key === day);
+        if (dayData){
+            try{
+                axios.put(`http://localhost:3001/api/users/${userID}/editAvailability`, {dayData})
+                .then(response => {
+                    setCurrentAvail(response.data.availability);
+                })
+            } catch (error){
+                console.error("Error changing availability");
+            }
+            setToggleAvail(null);
+        }
+        console.log(currentUserAvail);
     }
 
     const days = [
@@ -298,11 +325,11 @@ export default function UserProfile() {
 
                                     <div className="flex gap-2">
                                         <input 
-                                            className="bg-gray-300 pr-10 pl-2 py-1 placeholder-black" 
+                                            className="bg-gray-300 pr-10 pl-2 py-1 placeholder-black rounded-sm" 
                                             placeholder="Create a new skill..."
                                             onChange={(e) => setNewSkill(e.target.value)}
                                         />
-                                        <button className="bg-gray-400 hover:bg-gray-500 px-3 py-1 rounded-md" onClick={handleAddSkill}>
+                                        <button className="bg-gray-400 hover:bg-gray-500 px-3 py-1 rounded-sm" onClick={handleAddSkill}>
                                             Add Skill
                                         </button>
                                     </div>
@@ -329,29 +356,56 @@ export default function UserProfile() {
 
                                 <ul className="grid grid-cols-7 gap-3 mt-5 h-3/5">
                                     {days.map((day) => (
-                                        <li key={day.key} className="bg-gray-300 text-center flex flex-col">
-                                            <h1 className="py-2">
+                                        <li key={day.key} className="bg-gray-300 text-center flex flex-col rounded-sm">
+                                            <div className="w-full mt-1 text-md relative">
+                                                {toggleAvail === day.name.toLowerCase() ? (
+                                                    <button onClick={() => submitAvailability(day.name.toLowerCase())}>
+                                                        <MdOutlineCheck className="absolute mr-2 inset-y-0 right-0 hover:bg-gray-200 rounded-full text-gray-500 text-xl"/>
+                                                    </button>
+                                                ) : (
+                                                    <button onClick={() => handleAvailability(day.name.toLowerCase())}>
+                                                        <MdOutlineModeEdit className="absolute mr-2 inset-y-0 right-0 hover:bg-gray-200 rounded-full  text-gray-500"/>
+                                                    </button>
+                                                )}
+                                            </div>
+                                            
+                                            <h1 className="py-1 flex justify-center items-center">
                                                 {day.name}
                                             </h1>
 
-                                            <div className="h-full text-2xl text-center flex justify-center items-center">
+                                            <div className="h-full text-xl text-center flex justify-center items-center">
                                                 <div className="max-w-fit text-left flex flex-col gap-5 my-5">
                                                     <div>
                                                         <h1>From:</h1>
-                                                        <h2>{userData.availability[day.key].start}</h2>
+                                                        {toggleAvail === day.name.toLowerCase() ? (
+                                                            <input 
+                                                                type="Time"
+                                                                onChange={(e) => handleAvailability(day.name.toLowerCase(), "start", e.target.value)}
+                                                            />
+                                                        ) : (
+                                                            <h2>
+                                                                {currentUserAvail[day.key].start}
+                                                            </h2>
+                                                        )}
                                                     </div>
                                                     <div>
                                                         <h1>To:</h1>
-                                                        <h2>{userData.availability[day.key].end}</h2>
+                                                        {toggleAvail === day.name.toLowerCase() ? (
+                                                            <input 
+                                                                type="Time"
+                                                                onChange={(e) => handleAvailability(day.name.toLowerCase(), "end", e.target.value)}
+                                                            />
+                                                        ) : (
+                                                            <h2>
+                                                                {currentUserAvail[day.key].end}
+                                                            </h2>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
                                         </li>
                                     ))}
                                 </ul>
-                                <button className="mt-7 py-2 px-8 w-min bg-primaryblue hover:bg-primaryblue-light text-white font-semibold shadow-md rounded-sm">
-                                    Edit
-                                </button>
                             </div>
                         </div>
                     )}
