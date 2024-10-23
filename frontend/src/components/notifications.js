@@ -1,20 +1,47 @@
-import React, {useState} from "react"
+import React, {useState, useEffect} from "react"
+import { useAuth } from "../middleware/user-vertification";
 import axios from "axios";
 
 export default function Notifications(){
+    const {loggedUser} = useAuth();
+    const [loading, setLoading] = useState(true);
     const [notifications, setNotifications] = useState({
-        newAssignments: true,
-        newUpdates: true,
-        newReminders: true
+        newEventAssignments: true,
+        newEventUpdates: true,
+        newEventReminders: true
     })
+
+    useEffect(() => {
+        const userID = loggedUser.userID;
+        axios.get(`http://localhost:3001/api/users/getNotifications/${userID}`)
+        .then(response => {
+            setNotifications(response.data);
+        })
+        .catch(error => {
+            console.error("Error fetching user data:", error);
+        })
+        .finally(() => {
+            setLoading(false);
+        })
+    }, [])
+
+    const handleBoxChange = (key) => {
+        setNotifications((prev) => ({
+            ...prev,
+            [key] : !prev[key],
+        }));
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         // console.log(notifications);
-        const userID = "someUserId";
-        axios.post(`http://localhost:3001/api/users/notifications/${userID}`, {notifications})
+        const userID = loggedUser.userID;
+        axios.post(`http://localhost:3001/api/users/updateNotifications/${userID}`, {notifications})
         .then(result => {
-            console.log(result);
+            setNotifications(result.data);
+        })
+        .catch(error => {
+            console.error("Error fetching user data:", error);
         })
     }
 
@@ -34,9 +61,9 @@ export default function Notifications(){
                             <input 
                                 type="checkbox" 
                                 value=""
-                                checked={notifications.newAssignments}
+                                checked={notifications.newEventAssignments}
                                 className="sr-only peer"
-                                onChange={(e) => setNotifications({...notifications, newAssignments: e.target.checked})}
+                                onChange={() => handleBoxChange("newEventAssignments")}
                             />
                             <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div>
                         </label>
@@ -51,9 +78,9 @@ export default function Notifications(){
                             <input 
                                 type="checkbox" 
                                 value=""
-                                checked={notifications.newUpdates}
+                                checked={notifications.newEventUpdates}
                                 className="sr-only peer"
-                                onChange={(e) => setNotifications({...notifications, newUpdates: e.target.checked})}
+                                onChange={() => handleBoxChange("newEventUpdates")}
                             />
                             <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div>
                         </label>
@@ -68,9 +95,9 @@ export default function Notifications(){
                             <input 
                                 type="checkbox" 
                                 value=""
-                                checked={notifications.newReminders}
+                                checked={notifications.newEventReminders}
                                 className="sr-only peer"
-                                onChange={(e) => setNotifications({...notifications, newReminders: e.target.checked})}
+                                onChange={() => handleBoxChange("newEventReminders")}
                             />
                             <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div>
                         </label>

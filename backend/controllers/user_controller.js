@@ -75,29 +75,47 @@ const getUserProfile = async (req, res) => {
     }
 }
 
+const getNotifications = async (req, res) => {
+    try{
+        const {userID} = req.params;
+        const user = await userModel.findById(userID, 'notifications')
+        if (!user){
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        res.status(200).json(user.notifications);
+    res.json
+    } catch (error) {
+        console.error("Error getting user profile:", error);
+        res.status(500).json({ message: "Server Error" });
+    }
+    
+}
+
 const handleNotifications = async (req, res) => { // edits notification settings for user
     try {
         const { userID } = req.params; // email will need to be passed through the route
-        const { newEventAssignments, newEventUpdates, newEventReminders } = req.body;
+        const { newEventAssignments, newEventUpdates, newEventReminders } = req.body.notifications;
 
+        const newNotifications = {
+            newEventAssignments: newEventAssignments,
+            newEventUpdates: newEventUpdates,
+            newEventReminders: newEventReminders
+        }
+        
         const updatedUser = await userModel.findByIdAndUpdate(
             userID,
-            {
-                notifications: {
-                    newEventAssignments,
-                    newEventUpdates,
-                    newEventReminders
-                }
-            },
-            {
-                new: true //by default, findByIdAndUpdate returns the document before it's updated. This ensures that mongoose returns the document after it's updated
-            }
+            {$set: {["notifications"]: newNotifications}},
+            {new: true} //by default, findByIdAndUpdate returns the document before it's updated. This ensures that mongoose returns the document after it's updated
         );
+
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        res.status(200).json({ message: 'Notification settings updated successfully', user: updatedUser });
+        res.status(200).json(updatedUser.notifications);
     } catch (error) {
         console.error("Something went wrong", error);
         res.status(500).json({ message: "Something went wrong" });
@@ -290,6 +308,7 @@ module.exports = {
     handleLogin,
     handleRegister,
     getUserProfile,
+    getNotifications,
     handleNotifications,
     getVolunteerHistory,
     handleMatching,
