@@ -1,104 +1,25 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import axios from "axios";
 import {useAuth} from "../middleware/user-vertification"
 // import {FaMagnifyingGlass} from "react-icons/fa6";
 
 export default function EventList(){
     const {isAdmin} = useAuth();
-    const eventList = [
-        {
-            eventName: "Community Cleanup",
-            eventDescription: "A day to clean up the local park.",
-            location: {
-                city: "Houston",
-                state: "Texas"
-            },
-            requiredSkills: "Physical Endurance",
-            urgency: "High",
-            eventDate: "8-18-2024"
-        },
-        {
-            eventName: "Food Drive",
-            eventDescription: "Collecting food for the local food bank.",
-            location: {
-                city: "Dallas",
-                state: "Texas"
-            },
-            requiredSkills: "Organizational Skills",
-            urgency: "Medium",
-            eventDate: "7-6-2024"
-        },
-        {
-            eventName: "Community Garden Planting",
-            eventDescription: "Help plant and maintain the community garden to promote green spaces in the neighborhood.",
-            location: {
-                city: "Houston",
-                state: "Texas"
-            },
-            requiredSkills: "Teamwork",
-            urgency: "Low",
-            eventDate: "6-15-2024"
-        },
-        {
-            eventName: "Senior Citizen Support",
-            eventDescription: "Assist seniors with daily tasks and provide companionship.",
-            location: {
-                city: "Dallas",
-                state: "Texas"
-            },
-            requiredSkills: "Patience, communication",
-            urgency: "High",
-            eventDate: "9-1-2024"
-        },
-        {
-            eventName: "Beach Cleanup",
-            eventDescription: "Clear trash from the shoreline to protect marine life.",
-            location: {
-                city: "San Antonio",
-                state: "Texas"
-            },
-            requiredSkills: "Physical Endurance",
-            urgency: "High",
-            eventDate: "9-12-2024"
-        },
-        {
-            eventName: "Animal Shelter Volunteering",
-            eventDescription: "Help care for animals and assist with shelter tasks.",
-            location: {
-                city: "San Antonio",
-                state: "Texas"
-            },
-            requiredSkills: "Compassion",
-            urgency: "Medium",
-            eventDate: "10-5-2024"
-        },
-        {
-            eventName: "Tree Planting Initiative",
-            eventDescription: "Plant trees in urban areas to improve air quality.",
-            location: {
-                city: "Austin",
-                state: "Texas"
-            },
-            requiredSkills: "Environmental Awareness",
-            urgency: "Medium",
-            eventDate: "10-12-2024"
-        },
-        {
-            eventName: "Blood Donation Drive",
-            eventDescription: "Organize and manage blood donations for local hospitals.",
-            location: {
-                city: "Austin",
-                state: "Texas"
-            },
-            requiredSkills: "Organization, Teamwork",
-            urgency: "High",
-            eventDate: "11-3-2024"
-        }
-    ];
-
+    const [eventList, setEventList] = useState([]);
     const [dropDowns, setDropDowns] = useState(
         new Array(eventList.length).fill(false)
     );
+
+    useEffect(() => {
+        axios.get("http://localhost:3001/api/events/getallevents")
+            .then(response => {
+                setEventList(response.data); 
+                setDropDowns(new Array(response.data.length).fill(false)); 
+            })
+            .catch(error => {
+                console.error("There was an error fetching the events!", error);
+            });
+    }, []);
 
     const toggleDropdown = (index) => {
         const updatedDropdowns = [...dropDowns];

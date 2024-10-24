@@ -162,18 +162,6 @@ const removeSkill = async (req, res) => {
     }
 }
 
-// const getVolunteerHistory = async (req, res) => { // gets 
-//     try {
-//         // For now, use hardcoded events (replace with MongoDB query later)
-//         const userId = req.params.userId;
-
-//         // Respond with the hardcoded volunteer history
-//         res.json(events);
-//     } catch (error) {
-//         console.error("Error fetching volunteer history:", error);
-//         res.status(500).json({ message: "Server Error" });
-//     }
-// }
 const getVolunteerHistory = async (req, res) => {
     try {
         const userID = req.params.userID;

@@ -28,6 +28,14 @@ const eventSchema = new mongoose.Schema({
         enum: ['low', 'medium', 'high'],
         default: 'low'
     },
+    // eventDate: {
+    //     type: Date,
+    //     required: true
+    // },
+    // eventTime: {
+    //     type: String,
+    //     required: true
+    // }
     startDate:{
         type: Date,
         required: true

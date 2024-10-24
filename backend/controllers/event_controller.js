@@ -43,7 +43,7 @@ const getAllEvents = async (req, res) => {
     try{
         const testForm = req.body;
         const events = await eventModel.find();
-        res.json(sampleEvents)
+        res.json(events)
     } catch (error) {
         console.error(error);
         res.status(500).json({message: "Server Error"})
