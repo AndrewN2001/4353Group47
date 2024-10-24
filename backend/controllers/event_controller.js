@@ -50,14 +50,19 @@ const getAllEvents = async (req, res) => {
     }
 }
 
-const deleteEvent = async(req, res) => {
-    try{
-        res.json(req.body);
+const deleteEvent = async (req, res) => {
+    try {
+        const eventId = req.params.eventId;
+        const deletedEvent = await eventModel.findByIdAndDelete(eventId);
+        if (!deletedEvent) {
+            return res.status(404).json({ message: "Event not found" });
+        }
+        res.status(200).json({ message: "Event deleted successfully", deletedEvent });
     } catch (error) {
         console.error(error);
-        res.status(500).json({message: "Server Error"})
+        res.status(500).json({ message: "Server Error" });
     }
-}
+};
 
 const updateEvent = async(req, res) => {
     try{
