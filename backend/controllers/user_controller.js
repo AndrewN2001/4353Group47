@@ -1,4 +1,5 @@
 const userModel = require("../models/user")
+const eventModel = require('../models/event')
 const bcrypt = require('bcrypt')
 const { events, volunteers } = require('../global_arrays/data');
 
@@ -181,6 +182,8 @@ const getVolunteerHistory = async (req, res) => {
 
 const handleMatching = async (req, res) => {
     try {
+        // const events = await eventModel.find();
+        // const volunteers = await userModel.find();
         let matches = [];
 
         const getDayOfWeek = (dateString) => {
@@ -226,6 +229,8 @@ const handleMatching = async (req, res) => {
 const getData = async (req, res) => { // gets all available events and volunteers
     try {
         const userId = req.params.userId;
+        const events = await eventModel.find();
+        const volunteers = await userModel.find();
         res.json({ events, volunteers });
     } catch (error) {
         console.error("Error fetching data:", error);

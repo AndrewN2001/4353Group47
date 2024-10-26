@@ -14,7 +14,8 @@ const VolunteerMatching = () => {
             .then(response => {
                 setVolunteers(response.data.volunteers);
                 setEvents(response.data.events);
-                console.log(response.data);
+                console.log(response.data.volunteers);
+                console.log(response.data.events);
             })
             .catch(error => {
                 console.error("Error fetching data:", error);
@@ -57,7 +58,7 @@ const VolunteerMatching = () => {
                                 {volunteers
                                     .filter(volunteer => volunteer.role === "Volunteer")
                                     .map((volunteer, index) => (
-                                        <li key={index} className="p-4 bg-gray-100 rounded">{volunteer.name}</li>
+                                        <li key={index} className="p-4 bg-gray-100 rounded">{volunteer.name.firstName + " " + volunteer.name.lastName}</li>
                                     ))}
                             </ul>
 
