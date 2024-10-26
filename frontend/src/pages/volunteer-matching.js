@@ -94,7 +94,7 @@ const VolunteerMatching = () => {
                     <ul className="space-y-6">
                         {matches.map((match, index) => (
                             <li key={index} className="p-4 bg-white shadow-md rounded-lg border border-gray-300">
-                                <div className="font-bold text-xl text-blue-600 mb-2">Volunteer: {match.volunteerName}</div>
+                                <div className="font-bold text-xl text-blue-600 mb-2">Volunteer: {match.volunteerName.firstName + " " + match.volunteerName.lastName}</div>
                                 <ul className="pl-4 space-y-2">
                                     {match.matchedEvents.map((event, eventIndex) => (
                                         <li key={eventIndex} className="bg-gray-100 text-gray-800 p-2 rounded-lg">

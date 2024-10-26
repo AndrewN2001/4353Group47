@@ -9,14 +9,14 @@ const handleLogin = async (req, res) => {
         const searchUser = await userModel.findOne({ 'emailAddress': email })
         if (searchUser) {
             const valid = await bcrypt.compare(password, searchUser.password);
-            if (valid){
+            if (valid) {
                 // res.json({
                 //     message: "login successful!",
                 //     username: searchUser.username,
                 // })
                 res.json(searchUser);
             } else {
-                res.status(400).json({message: "Invalid password."})
+                res.status(400).json({ message: "Invalid password." })
             }
         } else {
             res.status(401).json({ message: "User not found." })
@@ -51,8 +51,8 @@ const handleRegister = async (req, res) => {
         const saveUser = await newUser.save();
         res.json(newUser);
     } catch (error) {
-        if (error.code === 11000){
-            return res.status(409).json({message: "Account already exists!"});
+        if (error.code === 11000) {
+            return res.status(409).json({ message: "Account already exists!" });
         }
         console.error("Error saving user:", error)
         return res.status(500).json({ message: "Internal Server Error" })
@@ -63,13 +63,13 @@ const getUserProfile = async (req, res) => {
     try {
         const userID = req.params.userID; // userId for when needed by DB later
         const userProfile = await userModel.findById(userID);
-        if (!userProfile){
+        if (!userProfile) {
             return res.status(404).json({
                 message: "User not found"
             });
         }
         // Respond with the hardcoded user profile
-        res.json(userProfile);        
+        res.json(userProfile);
     } catch (error) {
         console.error("Error fetching user profile:", error);
         res.status(500).json({ message: "Server Error" });
@@ -77,22 +77,22 @@ const getUserProfile = async (req, res) => {
 }
 
 const getNotifications = async (req, res) => {
-    try{
-        const {userID} = req.params;
+    try {
+        const { userID } = req.params;
         const user = await userModel.findById(userID, 'notifications')
-        if (!user){
+        if (!user) {
             return res.status(404).json({
                 message: "User not found"
             });
         }
 
         res.status(200).json(user.notifications);
-    res.json
+        res.json
     } catch (error) {
         console.error("Error getting user profile:", error);
         res.status(500).json({ message: "Server Error" });
     }
-    
+
 }
 
 const handleNotifications = async (req, res) => { // edits notification settings for user
@@ -105,11 +105,11 @@ const handleNotifications = async (req, res) => { // edits notification settings
             newEventUpdates: newEventUpdates,
             newEventReminders: newEventReminders
         }
-        
+
         const updatedUser = await userModel.findByIdAndUpdate(
             userID,
-            {$set: {["notifications"]: newNotifications}},
-            {new: true} //by default, findByIdAndUpdate returns the document before it's updated. This ensures that mongoose returns the document after it's updated
+            { $set: { ["notifications"]: newNotifications } },
+            { new: true } //by default, findByIdAndUpdate returns the document before it's updated. This ensures that mongoose returns the document after it's updated
         );
 
         if (!updatedUser) {
@@ -128,12 +128,12 @@ const addSkill = async (req, res) => {
     const { newSkill } = req.body;
     // console.log("Skill to add:", newSkill)
     // console.log("ID to add the skill to:", userID);
-    try{
+    try {
         const user = await userModel.findById(userID);
-        if (!user){
-            return res.status(404).json({message: "User not found."})
+        if (!user) {
+            return res.status(404).json({ message: "User not found." })
         }
-        if (!user.skills.includes(newSkill)){
+        if (!user.skills.includes(newSkill)) {
             user.skills.push(newSkill);
         }
         await user.save();
@@ -145,18 +145,18 @@ const addSkill = async (req, res) => {
 }
 
 const removeSkill = async (req, res) => {
-    try{
+    try {
         const { userID, skill } = req.params;
         // console.log("Skill to remove:", skill);
         const user = await userModel.findByIdAndUpdate(
             userID,
             { $pull: { skills: skill } },
-            { new: true } 
+            { new: true }
         );
         if (!user) {
-            return res.status(404).json({message: "User not found"})
+            return res.status(404).json({ message: "User not found" })
         }
-        res.json({message: "Skill removed", user});
+        res.json({ message: "Skill removed", user });
     } catch (error) {
         console.error("Something went wrong", error);
         res.status(500).json({ message: "Something went wrong" });
@@ -169,8 +169,8 @@ const getVolunteerHistory = async (req, res) => {
         // Find the user by ID and populate the attendedEvents array
         const user = await userModel.findById(userID).populate("attendedEvents");
         if (!user) {
-            return res.status(404).json({ 
-                message: "User not found" 
+            return res.status(404).json({
+                message: "User not found"
             });
         }
         res.json(user.attendedEvents);
@@ -182,27 +182,36 @@ const getVolunteerHistory = async (req, res) => {
 
 const handleMatching = async (req, res) => {
     try {
-        // const events = await eventModel.find();
-        // const volunteers = await userModel.find();
+        const events = await eventModel.find();
+        const volunteers = await userModel.find();
+
         let matches = [];
 
-        const getDayOfWeek = (dateString) => {
-            const date = new Date(dateString);
+        const getDayOfWeek = (date) => {
             const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-            return days[date.getDay()];
+            return days[date.getUTCDay()];
         };
+
         volunteers.forEach(volunteer => {
             if (volunteer.role === "Volunteer") {
                 let volunteerMatches = {
-                    volunteerName: volunteer.name,
+                    volunteerName: {
+                        firstName: volunteer.name.firstName,
+                        lastName: volunteer.name.lastName
+                    },
                     matchedEvents: []
                 };
                 events.forEach(event => {
-                    const eventDay = getDayOfWeek(event.eventDate);
+                    const eventDay = getDayOfWeek(event.startDate);
+
+                    const hours = event.startDate.getUTCHours().toString().padStart(2, '0'); 
+                    const minutes = event.startDate.getUTCMinutes().toString().padStart(2, '0');
+                    const eventStartTime = `${hours}:${minutes}`;
+
                     if (volunteer.location.city === event.location.city &&
                         volunteer.availability[eventDay] &&
-                        volunteer.availability[eventDay].start <= event.eventTime &&
-                        volunteer.availability[eventDay].end > event.eventTime) {
+                        volunteer.availability[eventDay].start <= eventStartTime &&
+                        volunteer.availability[eventDay].end > eventStartTime) {
 
                         const hasSkills = event.requiredSkills.every(skill =>
                             volunteer.skills.includes(skill)
@@ -216,7 +225,6 @@ const handleMatching = async (req, res) => {
                 matches.push(volunteerMatches);
             }
         });
-
         res.json(matches);
 
     } catch (error) {
@@ -240,10 +248,10 @@ const getData = async (req, res) => { // gets all available events and volunteer
 
 
 const EventSignUp = async (req, res) => { // called when user signs up for specific event and adds it to their appliedEvents field
-    try{
+    try {
         const userId = req.params.userId;
         res.json(req.body);
-    } catch (error){
+    } catch (error) {
         console.error("Error fetching data:", error);
         res.status(500).json({
             message: "Server Error",
@@ -251,11 +259,11 @@ const EventSignUp = async (req, res) => { // called when user signs up for speci
     }
 }
 
-const getEvents = async(req, res) => { // would get every event that the user signed up for
-    try{
+const getEvents = async (req, res) => { // would get every event that the user signed up for
+    try {
         const userId = req.params.userId;
         res.json(volunteers[0].appliedEvents);
-    } catch (error){
+    } catch (error) {
         console.error("Error fetching data:", error);
         res.status(500).json({
             message: "Server Error",
@@ -264,19 +272,19 @@ const getEvents = async(req, res) => { // would get every event that the user si
 }
 
 const editUserInfo = async (req, res) => {
-    try{
+    try {
         const { userID } = req.params;
         const { newValues } = req.body;
         // console.log(userID, newValues);
         // res.json("Received");
         const updatedUser = await userModel.findByIdAndUpdate(
             userID,
-            {$set: newValues},
-            {new: true, runValidators: true}
+            { $set: newValues },
+            { new: true, runValidators: true }
         );
 
         if (!updatedUser) {
-            return res.status(404).json({message: "User not found."});
+            return res.status(404).json({ message: "User not found." });
         }
         res.status(200).json(updatedUser);
     } catch (error) {
@@ -288,7 +296,7 @@ const editUserInfo = async (req, res) => {
 }
 
 const editAvailability = async (req, res) => {
-    try{
+    try {
         const { userID } = req.params;
         const { key, start, end } = req.body.dayData;
         const newAvailability = {
@@ -297,12 +305,12 @@ const editAvailability = async (req, res) => {
         }
         const updatedUser = await userModel.findByIdAndUpdate(
             userID,
-            {$set: {[`availability.${key}`]: newAvailability}},
-            {new: true}
+            { $set: { [`availability.${key}`]: newAvailability } },
+            { new: true }
         )
 
-        if (!updatedUser){
-            return res.status(404).json({message: "User not found."});
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found." });
         }
         res.status(200).json(updatedUser);
     } catch (error) {
