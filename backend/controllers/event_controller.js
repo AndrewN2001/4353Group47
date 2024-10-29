@@ -1,5 +1,9 @@
 const eventModel = require('../models/event')
 
+const combineDateTime = (date, time) => {
+    return new Date(`${date}T${time}:00`);
+}
+
 const sampleEvents = {
     event1: {
         eventName: "Animal Shelter",
@@ -29,12 +33,28 @@ const sampleEvents = {
 
 const createEvent = async (req, res) => {
     try{
-        const testForm = req.body;
-        res.json(testForm)
+        const testForm = req.body.eventData;
+        const [loggedCity, loggedState] = testForm.location.split(', '). map(item => item.trim());
+        const newEvent = new eventModel({
+            eventName: testForm.eventName,
+            eventDescription: testForm.eventDescription,
+            location: {
+                city: loggedCity,
+                state: loggedState
+            },
+            requiredSkills: testForm.requiredSkills,
+            urgency: testForm.urgency,
+            startDate: combineDateTime(testForm.startDate, testForm.startTime),
+            endDate: combineDateTime(testForm.endDate, testForm.endTime)
+        })
+        await newEvent.validate();
+        const saveEvent = await newEvent.save();
+        console.log(newEvent);
+        res.json(newEvent);
     } catch (error){
-        console.error(error);
+        console.error("Validation error:", error.message);
         res.status(500).json({
-            message: "Server Error",
+            message: error.message || "Server Error",
         })
     }
 }
@@ -73,10 +93,36 @@ const updateEvent = async(req, res) => {
     }
 }
 
+const getEvents = async (req, res) => { // would get every event that the user signed up for
+    try {
+        const userId = req.params.userId;
+        res.json(volunteers[0].appliedEvents);
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        res.status(500).json({
+            message: "Server Error",
+        })
+    }
+}
+
+const EventSignUp = async (req, res) => { // called when user signs up for specific event and adds it to their appliedEvents field
+    try {
+        const userId = req.params.userId;
+        res.json(req.body);
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        res.status(500).json({
+            message: "Server Error",
+        })
+    }
+}
+
 module.exports = {
     createEvent,
     getAllEvents,
     deleteEvent,
     updateEvent,
+    getEvents,
+    EventSignUp,
     sampleEvents
 }

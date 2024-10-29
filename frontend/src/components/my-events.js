@@ -12,7 +12,7 @@ export default function Events(){
     useEffect(() => {
         const userID = loggedUser.userID; // Replace with actual user ID when DB is connected
         axios.all([
-            axios.get("http://localhost:3001/api/users/eventsattending"),
+            axios.get("http://localhost:3001/api/events/eventsattending"),
             axios.get(`http://localhost:3001/api/users/volunteer-history/${userID}`)
         ])
         .then(axios.spread((eventsResponse, historyResponse) => {

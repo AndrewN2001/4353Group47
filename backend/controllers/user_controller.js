@@ -48,6 +48,7 @@ const handleRegister = async (req, res) => {
             emailAddress: newUserData.emailAddress,
             password: hashedPassword
         });
+        await newUser.validate()
         const saveUser = await newUser.save();
         res.json(newUser);
     } catch (error) {
@@ -87,7 +88,6 @@ const getNotifications = async (req, res) => {
         }
 
         res.status(200).json(user.notifications);
-        res.json
     } catch (error) {
         console.error("Error getting user profile:", error);
         res.status(500).json({ message: "Server Error" });
@@ -233,7 +233,6 @@ const handleMatching = async (req, res) => {
     }
 }
 
-
 const getData = async (req, res) => { // gets all available events and volunteers
     try {
         const userId = req.params.userId;
@@ -243,31 +242,6 @@ const getData = async (req, res) => { // gets all available events and volunteer
     } catch (error) {
         console.error("Error fetching data:", error);
         res.status(500).json({ message: "Server Error" });
-    }
-}
-
-
-const EventSignUp = async (req, res) => { // called when user signs up for specific event and adds it to their appliedEvents field
-    try {
-        const userId = req.params.userId;
-        res.json(req.body);
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        res.status(500).json({
-            message: "Server Error",
-        })
-    }
-}
-
-const getEvents = async (req, res) => { // would get every event that the user signed up for
-    try {
-        const userId = req.params.userId;
-        res.json(volunteers[0].appliedEvents);
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        res.status(500).json({
-            message: "Server Error",
-        })
     }
 }
 
@@ -330,8 +304,6 @@ module.exports = {
     getVolunteerHistory,
     handleMatching,
     getData,
-    EventSignUp,
-    getEvents,
     addSkill,
     removeSkill,
     editUserInfo,

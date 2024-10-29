@@ -25,8 +25,8 @@ const eventSchema = new mongoose.Schema({
     },
     urgency: {
         type: String,
-        enum: ['low', 'medium', 'high'],
-        default: 'low'
+        enum: ['Low', 'Medium', 'High'],
+        default: 'Low'
     },
     startDate:{
         type: Date,

@@ -39,6 +39,7 @@ export default function Notifications(){
         axios.post(`http://localhost:3001/api/users/updateNotifications/${userID}`, {notifications})
         .then(result => {
             setNotifications(result.data);
+            alert("Notifications updated!");
         })
         .catch(error => {
             console.error("Error fetching user data:", error);
