@@ -1,4 +1,5 @@
 const eventModel = require('../models/event')
+const userModel = require('../models/user')
 
 const combineDateTime = (date, time) => {
     return new Date(`${date}T${time}:00`);
@@ -95,8 +96,16 @@ const updateEvent = async(req, res) => {
 
 const getEvents = async (req, res) => { // would get every event that the user signed up for
     try {
-        const userId = req.params.userId;
-        res.json(volunteers[0].appliedEvents);
+        const { userId }  = req.params;
+        // res.json(volunteers[0].appliedEvents);
+        const user = await userModel.findById(userId, 'attendedEvents').populate('attendedEvents');
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            })
+        }
+        console.log(user.attendedEvents);
+        res.status(200).json(user.attendedEvents);
     } catch (error) {
         console.error("Error fetching data:", error);
         res.status(500).json({
@@ -107,8 +116,22 @@ const getEvents = async (req, res) => { // would get every event that the user s
 
 const EventSignUp = async (req, res) => { // called when user signs up for specific event and adds it to their appliedEvents field
     try {
-        const userId = req.params.userId;
-        res.json(req.body);
+        const {userId} = req.params;
+        // res.json(req.body);
+        const eventID = req.body._id;
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({message: "Message not found."});
+        }
+
+        if (!user.attendedEvents.includes(eventID)){
+            user.attendedEvents.push(eventID);
+            await user.save();
+        }
+
+        res.status(200).json({
+            message: "Event added to user successfully", userId
+        })
     } catch (error) {
         console.error("Error fetching data:", error);
         res.status(500).json({

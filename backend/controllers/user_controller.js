@@ -34,7 +34,6 @@ const handleRegister = async (req, res) => {
         const newUserData = req.body.accountForm;
         const existingUser = await userModel.findOne({ 'accountInfo.emailAddress': newUserData.emailAddress })
         const hashedPassword = await bcrypt.hash(newUserData.password, 10);
-
         const newUser = new userModel({
             name: {
                 firstName: newUserData.name.firstName,

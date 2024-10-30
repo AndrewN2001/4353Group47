@@ -4,7 +4,7 @@ import {useAuth} from "../middleware/user-vertification"
 // import {FaMagnifyingGlass} from "react-icons/fa6";
 
 export default function EventList(){
-    const {isAdmin} = useAuth();
+    const {loggedUser, isAdmin} = useAuth();
     const [eventList, setEventList] = useState([]);
     const [dropDowns, setDropDowns] = useState(
         new Array(eventList.length).fill(false)
@@ -42,7 +42,8 @@ export default function EventList(){
 
     const handleApply = (e, index) => {
         e.preventDefault();
-        axios.post("http://localhost:3001/api/users/eventapply", eventList[index])
+        const userId = loggedUser.userID;
+        axios.post(`http://localhost:3001/api/events/eventapply/${userId}`, eventList[index])
         .then(result => {
             console.log(result);
         })
@@ -97,18 +98,30 @@ export default function EventList(){
                             </div>
 
                             {dropDowns[index] && (
-                                <div className="flex items-center justify-between w-full mt-4">
-                                    <div>
+                                <div className="flex flex-col items-center justify-between w-full gap-2 mt-4">
+                                    <div className="w-full text-left">
                                         {event.eventDescription}
                                     </div>
-                                    <div className="flex gap-3">
-                                        <button className="text-primaryblue hover:underline hover:underline-offset-2">
-                                            Remove
-                                        </button>
-                                        <button className="bg-primaryblue hover:bg-primaryblue-light text-white px-5 py-2" onClick={(e) => handleApply(e, index)}>
-                                            Apply
-                                        </button>
+                                    <div className="flex items-center w-full justify-between bg-gray">
+                                        <div className="flex gap-3">
+                                            {event.requiredSkills.map((skill, index) => (
+                                                <h1 key={index} className="bg-gray-400 px-3 py-2 text-sm rounded-md">
+                                                    {skill}
+                                                </h1>
+                                            ))}
+                                        </div>
+                                        <div className="flex gap-3">
+                                            {isAdmin ? (
+                                                <button className="text-primaryblue hover:underline hover:underline-offset-2">
+                                                    Remove
+                                                </button>
+                                            ) : null}
+                                            <button className="bg-primaryblue hover:bg-primaryblue-light text-white px-5 py-2" onClick={(e) => handleApply(e, index)}>
+                                                Apply
+                                            </button>
+                                        </div>
                                     </div>
+                                    
                                 </div>
                             )}
                         </button>
