@@ -29,6 +29,9 @@ const handleRegister = async (req, res) => {
     try {
         const newUserData = req.body.accountForm;
         const existingUser = await userModel.findOne({ 'accountInfo.emailAddress': newUserData.emailAddress })
+        if (existingUser) {
+            return res.status(409).json({ message: "Account already exists!" });
+        }
         const hashedPassword = await bcrypt.hash(newUserData.password, 10);
         const newUser = new userModel({
             name: {
@@ -47,9 +50,6 @@ const handleRegister = async (req, res) => {
         const saveUser = await newUser.save();
         res.json(newUser);
     } catch (error) {
-        if (error.code === 11000) {
-            return res.status(409).json({ message: "Account already exists!" });
-        }
         console.error("Error saving user:", error)
         return res.status(500).json({ message: "Internal Server Error" })
     }
@@ -57,14 +57,13 @@ const handleRegister = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
     try {
-        const userID = req.params.userID; // userId for when needed by DB later
+        const userID = req.params.userID; 
         const userProfile = await userModel.findById(userID);
         if (!userProfile) {
             return res.status(404).json({
                 message: "User not found"
             });
         }
-        // Respond with the hardcoded user profile
         res.json(userProfile);
     } catch (error) {
         console.error("Error fetching user profile:", error);

@@ -158,6 +158,7 @@ const eventWithdraw = async (req, res) => {
 }
 
 module.exports = {
+    combineDateTime,
     createEvent,
     getAllEvents,
     deleteEvent,

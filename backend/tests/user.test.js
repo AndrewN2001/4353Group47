@@ -145,6 +145,6 @@ describe("User Schema", () => {
     });
 
     const savedUser = await userWithoutRole.save();
-    expect(savedUser.role).toBe("user");
+    expect(savedUser.role).toBe("Volunteer");
   });
 });

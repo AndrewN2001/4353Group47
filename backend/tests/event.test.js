@@ -72,7 +72,7 @@ describe("Event Schema", () => {
         state: "Texas"
       },
       requiredSkills: ["Problem Solving", "Communication"],
-      urgency: "high",
+      urgency: "High",
       startDate: new Date("2024-08-18"),
       endDate: new Date("2024-08-17") // Invalid endDate
     });
@@ -102,6 +102,6 @@ describe("Event Schema", () => {
     });
 
     const savedEvent = await eventWithoutUrgency.save();
-    expect(savedEvent.urgency).toBe("low");
+    expect(savedEvent.urgency).toBe("Low");
   });
 });
