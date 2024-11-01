@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { BsPersonFill } from "react-icons/bs";
 import { IoIosNotifications } from "react-icons/io";
 import { IoClose, IoCalendarClear } from "react-icons/io5";
+import { MdOutlineModeEdit, MdOutlineCheck } from "react-icons/md";
 import Notifications from "../components/notifications";
 import Events from "../components/my-events";
 import axios from "axios"
@@ -10,17 +11,35 @@ import { useNavigate } from "react-router-dom";
 
 export default function UserProfile() {
     const navigate = useNavigate();
+    const {loggedUser, logout, setAdmin} = useAuth();
+
+    // list of states, needs to be reduced using the hook useReducer
     const [selectedPage, setSelected] = useState("dashboard")
-    const [userData, setUserData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const {logout, setAdmin} = useAuth();
+    const [userData, setUserData] = useState(null); // loads user data
+    const [loading, setLoading] = useState(true); // makes the page wait until everything is rendered
+    const [updateInfo, setUpdateInfo] = useState(false); // toggle for the button
+    const [newSkill, setNewSkill] = useState(''); // contains the skill to be added
+    const [currentUserInfo, setCurrentInfo] = useState({}) // loads the current user info
+    const [skills, setSkills] = useState([]); // currentSkills
+    const [newValues, setNewValues] = useState({}); // list of new userInfo
+    const [newAvail, setNewAvail] = useState([]);
+    const [toggleAvail, setToggleAvail] = useState(null);
+    const [currentUserAvail, setCurrentAvail] = useState({});
 
     useEffect(() => {
-        const userId = "someUserId"; // Replace with actual user ID when DB is connected
+        const userId = loggedUser.userID; // Replace with actual user ID when DB is connected
         axios.get(`http://localhost:3001/api/users/profile/${userId}`)
             .then(response => {
+                // console.log(response.data);
+                setCurrentInfo({
+                    name: response.data.name,
+                    location: response.data.location,
+                    emailAddress: response.data.emailAddress,
+                    phoneNumber: response.data.phoneNumber
+                })
+                setCurrentAvail(response.data.availability);
+                setSkills(response.data.skills);
                 setUserData(response.data);
-                console.log(response.data);
                 if (response.data.role === "Admin"){
                     setAdmin(true);
                 } else{
@@ -35,9 +54,118 @@ export default function UserProfile() {
             })
     }, []);
 
+    const handleAddSkill = async () => {
+        const userID = loggedUser.userID;
+        try{
+            axios.put(`http://localhost:3001/api/users/${userID}/addSkill`, {newSkill})
+            .then(response => {
+                setSkills((prevSkills) => [...prevSkills, newSkill]);
+                setNewSkill('')
+            })
+        } catch (error) {
+            console.error("Error adding skill:", error);
+        }
+    }
+
+    const handleRemoveSkill = async (skill) => {
+        const userID = loggedUser.userID;
+        try{
+            axios.delete(`http://localhost:3001/api/users/${userID}/removeSkill/${skill}`)
+            .then(response => {
+                console.log(response);
+                setSkills(prevSkills => prevSkills.filter(s => s !== skill)) // filters out by returning every skill that's not the removed skill
+            })
+        } catch (error) {
+            console.error("Error adding skill:", error);
+        }
+    }
+
     const handleLogOut = () => {
         logout();
         navigate('/');
+    }
+    
+    const toggleUpdateInfo = () => {
+        setUpdateInfo(prevState => !prevState);
+    }
+
+    const handleInfoChange = async (field, newInfo) => {
+        setNewValues((prevData) => {
+            switch (field){
+                case "name":
+                    const [firstName, lastName] = newInfo.split(" ");
+                    return {
+                        ...prevData,
+                        name: {firstName, lastName}
+                    }
+                case "location":
+                    const [city, state] = newInfo.split(" ");
+                    return {
+                        ...prevData,
+                        location: {city, state}
+                    }
+                case "emailAddress":
+                    return{
+                        ...prevData,
+                        emailAddress: newInfo
+                    }
+                case "phoneNumber":
+                    return{
+                        ...prevData,
+                        emailAddress: newInfo
+                    }
+                default:
+                    return prevData;
+            }
+        })
+    }
+
+    const submitInfoChange = async () => {
+        const userID = loggedUser.userID;
+        // console.log(newInfo, userID);
+        axios.put(`http://localhost:3001/api/users/${userID}/editInfo`, {newValues})
+        .then(response => {
+            // console.log(response);
+            setCurrentInfo({
+                name: response.data.name,
+                location: response.data.location,
+                emailAddress: response.data.emailAddress,
+                phoneNumber: response.data.phoneNumber
+            })
+        })
+        setUpdateInfo(false);
+    }
+
+    const handleAvailability = async (day, type, value) => { // ex. (sunday, "start", 8:00)
+        setToggleAvail(day);
+        setNewAvail((prev) => {
+            const existingDay = prev.find(item => item.key === day); // checks to see if that day is already entered in
+            if (existingDay){
+                return prev.map(item => item.key === day ? {...item, [type]: value} : item)
+            } else{
+                return [
+                    ...prev,
+                    {key: day.toLowerCase(), [type]: value}
+                ]
+            }
+        })
+    }
+
+    const submitAvailability = async (day) => {
+        const userID = loggedUser.userID;
+        const dayData = newAvail.find(item => item.key === day);
+        if (dayData){
+            try{
+                axios.put(`http://localhost:3001/api/users/${userID}/editAvailability`, {dayData})
+                .then(response => {
+                    setCurrentAvail(response.data.availability);
+                })
+            } catch (error){
+                console.error("Error changing availability");
+            }
+            setToggleAvail(null);
+        }
+        console.log(currentUserAvail);
     }
 
     const days = [
@@ -67,7 +195,7 @@ export default function UserProfile() {
 
                             <div className="text-center">
                                 <h1 className="text-4xl text-nowrap">
-                                    {userData.name}
+                                    {currentUserInfo.name.firstName + " " + currentUserInfo.name.lastName}
                                 </h1>
                                 <h2 className="mt-2 text-lg">
                                     {userData.role}
@@ -120,7 +248,16 @@ export default function UserProfile() {
                                                 Full Name
                                             </h1>
                                             <h1 className="font-light">
-                                                {userData.name}
+                                                {updateInfo ? (
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Enter new name:"
+                                                        className="text-right"
+                                                        onChange={(e) => handleInfoChange("name", e.target.value)}
+                                                    />
+                                                ) : (
+                                                    currentUserInfo.name.firstName + " " + currentUserInfo.name.lastName
+                                                )}
                                             </h1>
                                         </li>
                                         <li className="border-b-2 h-10 flex items-center gap-20 justify-between">
@@ -128,7 +265,16 @@ export default function UserProfile() {
                                                 Location
                                             </h1>
                                             <h1 className="font-light">
-                                                {userData.location.city + ", " + userData.location.state}
+                                                {updateInfo ? (
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Enter new location:"
+                                                        className="text-right"
+                                                        onChange={(e) => handleInfoChange("location", e.target.value)}
+                                                    />
+                                                ) : (
+                                                    currentUserInfo.location.city + ", " + currentUserInfo.location.state
+                                                )}
                                             </h1>
                                         </li>
                                         <li className="border-b-2 h-10 flex items-center gap-20 justify-between">
@@ -136,7 +282,16 @@ export default function UserProfile() {
                                                 Email
                                             </h1>
                                             <h1 className="font-light">
-                                                {userData.email}
+                                                {updateInfo ? (
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Enter new email address:"
+                                                        className="text-right w-72"
+                                                        onChange={(e) => handleInfoChange("emailAddress", e.target.value)}
+                                                    />
+                                                ) : (
+                                                    currentUserInfo.emailAddress
+                                                )}
                                             </h1>
                                         </li>
                                         <li className="border-b-2 h-10 flex items-center gap-20 justify-between">
@@ -144,12 +299,21 @@ export default function UserProfile() {
                                                 Phone Number
                                             </h1>
                                             <h1 className="font-light">
-                                                {userData.phoneNumber}
+                                                {updateInfo ? (
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Enter new phone number:"
+                                                        className="text-right"
+                                                        onChange={(e) => handleInfoChange("phoneNumber", e.target.value)}
+                                                    />
+                                                ) : (
+                                                    currentUserInfo.phoneNumber
+                                                )}
                                             </h1>
                                         </li>
                                     </ul>
-                                    <button className="mt-7 py-2 px-8 bg-primaryblue hover:bg-primaryblue-light text-white font-semibold shadow-md rounded-sm">
-                                        Edit
+                                    <button className="mt-7 py-2 px-8 bg-primaryblue hover:bg-primaryblue-light text-white font-semibold shadow-md rounded-sm" onClick={updateInfo ? submitInfoChange : toggleUpdateInfo}>
+                                        {updateInfo ? "Save" : "Edit"}
                                     </button>
                                 </div>
                             </div>
@@ -158,14 +322,27 @@ export default function UserProfile() {
                                     <h1 className="text-4xl">
                                         Skills
                                     </h1>
-                                    <input placeholder="Search for a Skill:" className="h-10 pl-3 pr-36 bg-gray-200" />
+
+                                    <div className="flex gap-2">
+                                        <input 
+                                            className="bg-gray-300 pr-10 pl-2 py-1 placeholder-black rounded-sm" 
+                                            placeholder="Create a new skill..."
+                                            onChange={(e) => setNewSkill(e.target.value)}
+                                        />
+                                        <button className="bg-gray-400 hover:bg-gray-500 px-3 py-1 rounded-sm" onClick={handleAddSkill}>
+                                            Add Skill
+                                        </button>
+                                    </div>
                                 </div>
 
-                                <div className="w-full bg-gray-300 min-h-60">
-                                    <ul className="flex pl-3 pt-3 gap-3">
-                                        {userData.skills.map((skill, index) => (
-                                            <li key={index} className="px-3 py-2 bg-gray-400 text-black rounded-md">
+                                <div className="w-full bg-gray-300 min-h-60 rounded-sm p-3">
+                                    <ul className="flex gap-3">
+                                        {skills.map((skill, index) => (
+                                            <li key={index} className="px-3 py-2 bg-gray-400 text-black rounded-md flex items-center gap-3">
                                                 {skill}
+                                                <button className="hover:bg-gray-300 rounded-full" onClick={() => handleRemoveSkill(skill)}>
+                                                    <IoClose className="text-sm"/>
+                                                </button>
                                             </li>
                                         ))}
                                     </ul>
@@ -179,20 +356,50 @@ export default function UserProfile() {
 
                                 <ul className="grid grid-cols-7 gap-3 mt-5 h-3/5">
                                     {days.map((day) => (
-                                        <li key={day.key} className="bg-gray-300 text-center flex flex-col">
-                                            <h1 className="py-2">
+                                        <li key={day.key} className="bg-gray-300 text-center flex flex-col rounded-sm">
+                                            <div className="w-full mt-1 text-md relative">
+                                                {toggleAvail === day.name.toLowerCase() ? (
+                                                    <button onClick={() => submitAvailability(day.name.toLowerCase())}>
+                                                        <MdOutlineCheck className="absolute mr-2 inset-y-0 right-0 hover:bg-gray-200 rounded-full text-gray-500 text-xl"/>
+                                                    </button>
+                                                ) : (
+                                                    <button onClick={() => handleAvailability(day.name.toLowerCase())}>
+                                                        <MdOutlineModeEdit className="absolute mr-2 inset-y-0 right-0 hover:bg-gray-200 rounded-full  text-gray-500"/>
+                                                    </button>
+                                                )}
+                                            </div>
+                                            
+                                            <h1 className="py-1 flex justify-center items-center">
                                                 {day.name}
                                             </h1>
 
-                                            <div className="h-full text-2xl text-center flex justify-center items-center">
+                                            <div className="h-full text-xl text-center flex justify-center items-center">
                                                 <div className="max-w-fit text-left flex flex-col gap-5 my-5">
                                                     <div>
                                                         <h1>From:</h1>
-                                                        <h2>{userData.availability[day.key].start}</h2>
+                                                        {toggleAvail === day.name.toLowerCase() ? (
+                                                            <input 
+                                                                type="Time"
+                                                                onChange={(e) => handleAvailability(day.name.toLowerCase(), "start", e.target.value)}
+                                                            />
+                                                        ) : (
+                                                            <h2>
+                                                                {currentUserAvail[day.key].start}
+                                                            </h2>
+                                                        )}
                                                     </div>
                                                     <div>
                                                         <h1>To:</h1>
-                                                        <h2>{userData.availability[day.key].end}</h2>
+                                                        {toggleAvail === day.name.toLowerCase() ? (
+                                                            <input 
+                                                                type="Time"
+                                                                onChange={(e) => handleAvailability(day.name.toLowerCase(), "end", e.target.value)}
+                                                            />
+                                                        ) : (
+                                                            <h2>
+                                                                {currentUserAvail[day.key].end}
+                                                            </h2>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>

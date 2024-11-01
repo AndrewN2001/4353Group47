@@ -1,7 +1,15 @@
 import React from "react"
 import homepage from "../images/homepage.jpeg"
+<<<<<<< HEAD
 
 export default function HomePage(){
+=======
+import { useAuth } from "../middleware/user-vertification"
+
+export default function HomePage(){
+    const {isLoggedIn} = useAuth();
+
+>>>>>>> develop
     return(
         <div className="relative h-fit flex justify-center items-end">
             <img src={homepage} alt="Logo" className="mix-blend-overlay object-cover"/>
@@ -14,6 +22,7 @@ export default function HomePage(){
                 </h2>
 
                 <div className="text-2xl flex gap-10 mt-3 items-center">
+<<<<<<< HEAD
                     <a href="/eventlist" className="hover:underline hover:underline-offset-2">
                         Find Events
                     </a>
@@ -21,6 +30,16 @@ export default function HomePage(){
                     <a href="/registration" className="bg-accentyellow hover:bg-accentyellow-light text-white px-5 py-2 rounded-md">
                         Sign Up
                     </a>
+=======
+                    <a href="/eventlist" className="bg-accentyellow hover:bg-accentyellow-light px-5 py-2 rounded-md">
+                        Find Events
+                    </a>
+                    {!isLoggedIn ? (
+                        <a href="/registration" className="bg-accentyellow hover:bg-accentyellow-light text-white px-5 py-2 rounded-md">
+                            Sign Up
+                        </a>
+                    ) : (null)}
+>>>>>>> develop
                 </div>
             </div>
         </div>

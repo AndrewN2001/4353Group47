@@ -35,8 +35,8 @@ export default function Login(){
         e.preventDefault();
         axios.post("http://localhost:3001/api/users/login", {credentials})
         .then(result => {
-            // console.log(result);
-            login("Andrew");
+            console.log(result.data);
+            login(result.data.name.firstName, result.data._id, result.data.attendedEvents);
             navigate('/userprofile')
         })
         .catch(err => {

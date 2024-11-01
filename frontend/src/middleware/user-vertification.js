@@ -8,7 +8,11 @@ export const useAuth = () => {
 
 export const AuthProvider = ({children}) => {
     const [isLoggedIn, setLoggedIn] = useState(false);
-    const [loggedUser, setLoggedUser] = useState(null);
+    // const [loggedUser, setLoggedUser] = useState(null);
+    const [loggedUser, setLoggedUser] = useState({
+        name: null,
+        userID: null,
+    });
     const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading] = useState(true);
 
@@ -16,7 +20,13 @@ export const AuthProvider = ({children}) => {
         const storedUser = localStorage.getItem("loggedUser")
         const storedAdmin = localStorage.getItem("isAdmin");
         if (storedUser) {
-            setLoggedUser(storedUser);
+            // console.log(storedUser);
+            const user = JSON.parse(storedUser);
+            setLoggedUser({
+                name: user.name,
+                userID: user.userID,
+            })
+
             setLoggedIn(true);
             if (storedAdmin === "true"){
                 setIsAdmin(true);
@@ -27,10 +37,16 @@ export const AuthProvider = ({children}) => {
         setLoading(false);
     }, []);
 
-    const login = (name) => {
+    const login = (name, userID, attendedEvents) => {
         setLoggedIn(true);
-        setLoggedUser(name);
-        localStorage.setItem("loggedUser", name);
+        setLoggedUser({
+            name: name,
+            userID: userID,
+        });
+        localStorage.setItem("loggedUser", JSON.stringify({
+            name: name,
+            userID: userID,
+        }));
     }
 
     const logout = () => {

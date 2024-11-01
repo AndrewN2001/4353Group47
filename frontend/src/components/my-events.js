@@ -5,15 +5,15 @@ import axios from "axios";
 
 export default function Events(){
     const [attendEvents, setAttendEvents] = useState([]);
-    const {isAdmin} = useAuth();
+    const {loggedUser, isAdmin} = useAuth();
     const [volunteerData, setVolunteerData] = useState([]);
     const [openIndex, setOpenIndex] = useState(null);
 
     useEffect(() => {
-        const userId = "someUserId"; // Replace with actual user ID when DB is connected
+        const userID = loggedUser.userID; // Replace with actual user ID when DB is connected
         axios.all([
-            axios.get("http://localhost:3001/api/users/eventsattending"),
-            axios.get(`http://localhost:3001/api/users/volunteer-history/${userId}`)
+            axios.get(`http://localhost:3001/api/events/eventsattending/${userID}`),
+            axios.get(`http://localhost:3001/api/users/volunteer-history/${userID}`)
         ])
         .then(axios.spread((eventsResponse, historyResponse) => {
             setAttendEvents(eventsResponse.data);
@@ -24,9 +24,9 @@ export default function Events(){
         })
     }, [])
 
-    useEffect(() => {
-        console.log(attendEvents);
-    }, [attendEvents])
+    // useEffect(() => {
+    //     console.log(attendEvents);
+    // }, [attendEvents])
 
     const [dropDowns, setDropDowns] = useState(
         new Array(attendEvents.length).fill(false)
@@ -45,6 +45,25 @@ export default function Events(){
     const handleToggle = (index) => {
         setOpenIndex(openIndex === index ? null : index);
     };
+
+    const handleWithdraw = (eventID) => {
+        const userID = loggedUser.userID;
+        try{
+            axios.delete(`http://localhost:3001/api/events/withdrawEvent/${userID}/${eventID}`)
+            .then(response => {
+                console.log(response);
+                setAttendEvents((attendEvents) => 
+                    attendEvents.filter(event => event._id !== eventID)
+                )
+
+                setVolunteerData((attendEvents) => 
+                    attendEvents.filter(event => event._id !== eventID)
+                )
+            })
+        } catch (error) {
+            console.error("Error adding skill:", error);
+        }
+    }
 
     return(
         <div className="mt-24 px-7 w-full h-full">
@@ -87,7 +106,7 @@ export default function Events(){
                                     <div>
                                         {event.eventDescription}
                                     </div>
-                                    <button className="bg-primaryblue hover:bg-primaryblue-light text-white px-5 py-2">
+                                    <button className="bg-primaryblue hover:bg-primaryblue-light text-white px-5 py-2" onClick={() => handleWithdraw(event._id)}>
                                         Withdraw
                                     </button>
                                 </div>
@@ -131,7 +150,7 @@ export default function Events(){
                                         <td colSpan="3" className="bg-gray-300">
                                             <div className="p-4">
                                                 <p><strong>Event Description:</strong> {event.eventDescription}</p>
-                                                <p><strong>Location:</strong> {event.location}</p>
+                                                <p><strong>Location:</strong> {event.location.city}</p>
                                                 <p><strong>Required Skills:</strong> {event.requiredSkills}</p>
                                                 <p><strong>Urgency:</strong> {event.urgency}</p>
                                                 <p><strong>Event Date:</strong> {event.eventDate}</p>

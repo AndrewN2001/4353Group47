@@ -1,33 +1,22 @@
 const userModel = require("../models/user")
+const eventModel = require('../models/event')
 const bcrypt = require('bcrypt')
 const { events, volunteers } = require('../global_arrays/data');
 
 const handleLogin = async (req, res) => {
     try {
-        // const { email, password } = req.body.credentials.accountInfo;
-        // const searchUser = await userModel.findOne({ 'accountInfo.email': email })
-        // if (searchUser) {
-        // const valid = await bcrypt.compare(password, searchUser.accountInfo.password);
-        // if (valid){
-        //     res.json({
-        //         message: "login successful!",
-        //         username: searchUser.accountInfo.username,
-        //     })
-        // } else{
-        //     res.status(401).json({message: "Invalid password."})
-        // }
-        // if (password !== searchUser.accountInfo.password) {
-        //     res.status(401).json({ message: "Invalid password." })
-        // } else {
-        //     res.json({
-        //         message: "login successful!",
-        //         accountInfo: searchUser.accountInfo,
-        //     })
-        // }
-        res.json(req.body);
-        // } else {
-        //     res.status(401).json({ message: "User not found." })
-        // }
+        const { email, password } = req.body.credentials.accountInfo;
+        const searchUser = await userModel.findOne({ 'emailAddress': email })
+        if (searchUser) {
+            const valid = await bcrypt.compare(password, searchUser.password);
+            if (valid) {
+                res.json(searchUser);
+            } else {
+                res.status(400).json({ message: "Invalid password." })
+            }
+        } else {
+            res.status(401).json({ message: "User not found." })
+        }
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -39,13 +28,11 @@ const handleLogin = async (req, res) => {
 const handleRegister = async (req, res) => {
     try {
         const newUserData = req.body.accountForm;
-        // res.json(newUserData.accountForm);
         const existingUser = await userModel.findOne({ 'accountInfo.emailAddress': newUserData.emailAddress })
         if (existingUser) {
-            return res.status(409).json({
-                message: "Account already exists!"
-            })
+            return res.status(409).json({ message: "Account already exists!" });
         }
+        const hashedPassword = await bcrypt.hash(newUserData.password, 10);
         const newUser = new userModel({
             name: {
                 firstName: newUserData.name.firstName,
@@ -57,69 +44,127 @@ const handleRegister = async (req, res) => {
             },
             phoneNumber: newUserData.phoneNumber,
             emailAddress: newUserData.emailAddress,
-            password: newUserData.password
+            password: hashedPassword
         });
-        // const saveUser = await newUser.save();
+        await newUser.validate()
+        const saveUser = await newUser.save();
         res.json(newUser);
     } catch (error) {
-        // if (error.code === 11000) {
-        //     return res.status(409).json({ message: "Account already exists!" })
-        // } else {
-            console.error("Error saving user:", error)
-            return res.status(500).json({ message: "Internal Server Error" })
-        // }
+        console.error("Error saving user:", error)
+        return res.status(500).json({ message: "Internal Server Error" })
     }
 }
 
 const getUserProfile = async (req, res) => {
     try {
-        // For now, use a hardcoded user profile (replace with MongoDB query later)
-        const userId = req.params.userId; // userId for when needed by DB later
-
-        // Respond with the hardcoded user profile
-        res.json(volunteers[0]);
+        const userID = req.params.userID; 
+        const userProfile = await userModel.findById(userID);
+        if (!userProfile) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+        res.json(userProfile);
     } catch (error) {
         console.error("Error fetching user profile:", error);
         res.status(500).json({ message: "Server Error" });
     }
 }
 
-const handleNotifications = async (req, res) => {
+const getNotifications = async (req, res) => {
+    try {
+        const { userID } = req.params;
+        const user = await userModel.findById(userID, 'notifications')
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        res.status(200).json(user.notifications);
+    } catch (error) {
+        console.error("Error getting user profile:", error);
+        res.status(500).json({ message: "Server Error" });
+    }
+
+}
+
+const handleNotifications = async (req, res) => { // edits notification settings for user
     try {
         const { userID } = req.params; // email will need to be passed through the route
-        const { newEventAssignments, newEventUpdates, newEventReminders } = req.body;
+        const { newEventAssignments, newEventUpdates, newEventReminders } = req.body.notifications;
+
+        const newNotifications = {
+            newEventAssignments: newEventAssignments,
+            newEventUpdates: newEventUpdates,
+            newEventReminders: newEventReminders
+        }
 
         const updatedUser = await userModel.findByIdAndUpdate(
             userID,
-            {
-                notifications: {
-                    newEventAssignments,
-                    newEventUpdates,
-                    newEventReminders
-                }
-            },
-            {
-                new: true //by default, findByIdAndUpdate returns the document before it's updated. This ensures that mongoose returns the document after it's updated
-            }
+            { $set: { ["notifications"]: newNotifications } },
+            { new: true } //by default, findByIdAndUpdate returns the document before it's updated. This ensures that mongoose returns the document after it's updated
         );
+
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        res.status(200).json({ message: 'Notification settings updated successfully', user: updatedUser });
+        res.status(200).json(updatedUser.notifications);
     } catch (error) {
         console.error("Something went wrong", error);
         res.status(500).json({ message: "Something went wrong" });
     }
-} 
+}
+
+const addSkill = async (req, res) => {
+    const { userID } = req.params;
+    const { newSkill } = req.body;
+
+    try {
+        const user = await userModel.findById(userID);
+        if (!user) {
+            return res.status(404).json({ message: "User not found." })
+        }
+        if (!user.skills.includes(newSkill)) {
+            user.skills.push(newSkill);
+        }
+        await user.save();
+        res.status(200).json(user.skills);
+    } catch (error) {
+        console.error("Something went wrong", error);
+        res.status(500).json({ message: "Something went wrong" });
+    }
+}
+
+const removeSkill = async (req, res) => {
+    try {
+        const { userID, skill } = req.params;
+        const user = await userModel.findByIdAndUpdate(
+            userID,
+            { $pull: { skills: skill } },
+            { new: true }
+        );
+        if (!user) {
+            return res.status(404).json({ message: "User not found" })
+        }
+        res.json({ message: "Skill removed", user });
+    } catch (error) {
+        console.error("Something went wrong", error);
+        res.status(500).json({ message: "Something went wrong" });
+    }
+}
 
 const getVolunteerHistory = async (req, res) => {
     try {
-        // For now, use hardcoded events (replace with MongoDB query later)
-        const userId = req.params.userId;
-
-        // Respond with the hardcoded volunteer history
-        res.json(events);
+        const userID = req.params.userID;
+        const user = await userModel.findById(userID).populate("attendedEvents");
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+        res.json(user.attendedEvents);
     } catch (error) {
         console.error("Error fetching volunteer history:", error);
         res.status(500).json({ message: "Server Error" });
@@ -128,29 +173,36 @@ const getVolunteerHistory = async (req, res) => {
 
 const handleMatching = async (req, res) => {
     try {
+        const events = await eventModel.find();
+        const volunteers = await userModel.find();
+
         let matches = [];
 
-        const getDayOfWeek = (dateString) => {
-            const date = new Date(dateString);
+        const getDayOfWeek = (date) => {
             const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-            return days[date.getDay()];
+            return days[date.getUTCDay()];
         };
 
         volunteers.forEach(volunteer => {
             if (volunteer.role === "Volunteer") {
                 let volunteerMatches = {
-                    volunteerName: volunteer.name,
+                    volunteerName: {
+                        firstName: volunteer.name.firstName,
+                        lastName: volunteer.name.lastName
+                    },
                     matchedEvents: []
                 };
-
-
-
                 events.forEach(event => {
-                    const eventDay = getDayOfWeek(event.eventDate);
+                    const eventDay = getDayOfWeek(event.startDate);
+
+                    const hours = event.startDate.getUTCHours().toString().padStart(2, '0'); 
+                    const minutes = event.startDate.getUTCMinutes().toString().padStart(2, '0');
+                    const eventStartTime = `${hours}:${minutes}`;
+
                     if (volunteer.location.city === event.location.city &&
                         volunteer.availability[eventDay] &&
-                        volunteer.availability[eventDay].start <= event.eventTime &&
-                        volunteer.availability[eventDay].end > event.eventTime) {
+                        volunteer.availability[eventDay].start <= eventStartTime &&
+                        volunteer.availability[eventDay].end > eventStartTime) {
 
                         const hasSkills = event.requiredSkills.every(skill =>
                             volunteer.skills.includes(skill)
@@ -161,11 +213,9 @@ const handleMatching = async (req, res) => {
                         }
                     }
                 });
-
                 matches.push(volunteerMatches);
             }
         });
-
         res.json(matches);
 
     } catch (error) {
@@ -174,39 +224,62 @@ const handleMatching = async (req, res) => {
     }
 }
 
-
-const getData = async (req, res) => {
+const getData = async (req, res) => { // gets all available events and volunteers
     try {
-        const userId = req.params.userId;
+        const events = await eventModel.find();
+        const volunteers = await userModel.find();
         res.json({ events, volunteers });
     } catch (error) {
         console.error("Error fetching data:", error);
         res.status(500).json({ message: "Server Error" });
     }
-
 }
 
+const editUserInfo = async (req, res) => {
+    try {
+        const { userID } = req.params;
+        const { newValues } = req.body;
 
-const EventSignUp = async (req, res) => {
-    try{
-        const userId = req.params.userId;
-        res.json(req.body);
-    } catch (error){
+        const updatedUser = await userModel.findByIdAndUpdate(
+            userID,
+            { $set: newValues },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found." });
+        }
+        res.status(200).json(updatedUser);
+    } catch (error) {
         console.error("Error fetching data:", error);
         res.status(500).json({
-            message: "Server Error",
+            message: "Server Error"
         })
     }
 }
 
-const getEvents = async(req, res) => {
-    try{
-        const userId = req.params.userId;
-        res.json(volunteers[0].appliedEvents);
-    } catch (error){
-        console.error("Error fetching data:", error);
+const editAvailability = async (req, res) => {
+    try {
+        const { userID } = req.params;
+        const { key, start, end } = req.body.dayData;
+        const newAvailability = {
+            start: start,
+            end: end
+        }
+        const updatedUser = await userModel.findByIdAndUpdate(
+            userID,
+            { $set: { [`availability.${key}`]: newAvailability } },
+            { new: true }
+        )
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found." });
+        }
+        res.status(200).json(updatedUser);
+    } catch (error) {
+        console.error('Error fetching data', error);
         res.status(500).json({
-            message: "Server Error",
+            message: "Server error"
         })
     }
 }
@@ -215,10 +288,13 @@ module.exports = {
     handleLogin,
     handleRegister,
     getUserProfile,
+    getNotifications,
     handleNotifications,
     getVolunteerHistory,
     handleMatching,
     getData,
-    EventSignUp,
-    getEvents
+    addSkill,
+    removeSkill,
+    editUserInfo,
+    editAvailability
 }

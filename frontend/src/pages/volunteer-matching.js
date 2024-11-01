@@ -14,7 +14,12 @@ const VolunteerMatching = () => {
             .then(response => {
                 setVolunteers(response.data.volunteers);
                 setEvents(response.data.events);
+<<<<<<< HEAD
                 console.log(response.data);
+=======
+                console.log(response.data.volunteers);
+                console.log(response.data.events);
+>>>>>>> develop
             })
             .catch(error => {
                 console.error("Error fetching data:", error);
@@ -43,7 +48,11 @@ const VolunteerMatching = () => {
 
     return (
         <div className="min-h-screen bg-gray-100 p-8">
+<<<<<<< HEAD
             <div className="max-w-7xl mx-auto">
+=======
+            <div className="max-w-7xl mx-auto ">
+>>>>>>> develop
                 {/* Title */}
                 <h1 className="text-4xl font-bold text-center mb-8">Volunteer Matching</h1>
 
@@ -55,9 +64,15 @@ const VolunteerMatching = () => {
                         <div className="h-64 overflow-y-auto">
                             <ul className="space-y-4">
                                 {volunteers
+<<<<<<< HEAD
                                     .filter(volunteer => volunteer.role === "Volunteer")
                                     .map((volunteer, index) => (
                                         <li key={index} className="p-4 bg-gray-100 rounded">{volunteer.name}</li>
+=======
+                                    .filter(volunteer => volunteer.role === "Volunteer") // only displays volunteers, not managers or admins
+                                    .map((volunteer, index) => (
+                                        <li key={index} className="p-4 bg-gray-100 rounded">{volunteer.name.firstName + " " + volunteer.name.lastName}</li>
+>>>>>>> develop
                                     ))}
                             </ul>
 
@@ -81,7 +96,11 @@ const VolunteerMatching = () => {
                 <div className="flex justify-center">
                     <button
                         onClick={handleCreateMatches}
+<<<<<<< HEAD
                         className="bg-blue-600 text-white font-semibold py-3 px-8 rounded hover:bg-blue-700"
+=======
+                        className="bg-primaryblue text-white font-semibold py-3 px-8 rounded hover:bg-primaryblue-light"
+>>>>>>> develop
                     >
                         Create Matches
                     </button>
@@ -93,7 +112,11 @@ const VolunteerMatching = () => {
                     <ul className="space-y-6">
                         {matches.map((match, index) => (
                             <li key={index} className="p-4 bg-white shadow-md rounded-lg border border-gray-300">
+<<<<<<< HEAD
                                 <div className="font-bold text-xl text-blue-600 mb-2">Volunteer: {match.volunteerName}</div>
+=======
+                                <div className="font-bold text-xl text-blue-600 mb-2">Volunteer: {match.volunteerName.firstName + " " + match.volunteerName.lastName}</div>
+>>>>>>> develop
                                 <ul className="pl-4 space-y-2">
                                     {match.matchedEvents.map((event, eventIndex) => (
                                         <li key={eventIndex} className="bg-gray-100 text-gray-800 p-2 rounded-lg">

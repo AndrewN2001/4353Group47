@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+<<<<<<< HEAD
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Register() {
+=======
+import { useNavigate } from 'react-router-dom';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
+export default function Register() {
+    const navigate = useNavigate();
+>>>>>>> develop
     const [passwordVisible, setPassVisible] = useState(true);
     const [confirmVisible, setConfirmVisible] = useState(true);
     const [confirmPW, setConfirm] = useState("");
@@ -59,7 +67,20 @@ export default function Register() {
             // console.log(accountForm);
             axios.post("http://localhost:3001/api/users/register", {accountForm})
             .then(result => {
+<<<<<<< HEAD
                 console.log(result);
+=======
+                // console.log(result);
+                window.alert("Account Created! Sign in to your new account.")
+                navigate('/login');
+            })
+            .catch(err => {
+                if (err.response && err.response.status === 500){
+                    window.alert('Internal Server Error. Please try again later.');
+                } else if (err.response && err.response.status === 409){
+                    window.alert('This account already exists! Try a different email.');
+                }
+>>>>>>> develop
             })
         } else{
             console.log("Passwords don't match.")

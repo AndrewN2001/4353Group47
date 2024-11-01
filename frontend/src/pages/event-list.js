@@ -1,104 +1,35 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import axios from "axios";
 import {useAuth} from "../middleware/user-vertification"
 // import {FaMagnifyingGlass} from "react-icons/fa6";
 
 export default function EventList(){
-    const {isAdmin} = useAuth();
-    const eventList = [
-        {
-            eventName: "Community Cleanup",
-            eventDescription: "A day to clean up the local park.",
-            location: {
-                city: "Houston",
-                state: "Texas"
-            },
-            requiredSkills: "Physical Endurance",
-            urgency: "High",
-            eventDate: "8-18-2024"
-        },
-        {
-            eventName: "Food Drive",
-            eventDescription: "Collecting food for the local food bank.",
-            location: {
-                city: "Dallas",
-                state: "Texas"
-            },
-            requiredSkills: "Organizational Skills",
-            urgency: "Medium",
-            eventDate: "7-6-2024"
-        },
-        {
-            eventName: "Community Garden Planting",
-            eventDescription: "Help plant and maintain the community garden to promote green spaces in the neighborhood.",
-            location: {
-                city: "Houston",
-                state: "Texas"
-            },
-            requiredSkills: "Teamwork",
-            urgency: "Low",
-            eventDate: "6-15-2024"
-        },
-        {
-            eventName: "Senior Citizen Support",
-            eventDescription: "Assist seniors with daily tasks and provide companionship.",
-            location: {
-                city: "Dallas",
-                state: "Texas"
-            },
-            requiredSkills: "Patience, communication",
-            urgency: "High",
-            eventDate: "9-1-2024"
-        },
-        {
-            eventName: "Beach Cleanup",
-            eventDescription: "Clear trash from the shoreline to protect marine life.",
-            location: {
-                city: "San Antonio",
-                state: "Texas"
-            },
-            requiredSkills: "Physical Endurance",
-            urgency: "High",
-            eventDate: "9-12-2024"
-        },
-        {
-            eventName: "Animal Shelter Volunteering",
-            eventDescription: "Help care for animals and assist with shelter tasks.",
-            location: {
-                city: "San Antonio",
-                state: "Texas"
-            },
-            requiredSkills: "Compassion",
-            urgency: "Medium",
-            eventDate: "10-5-2024"
-        },
-        {
-            eventName: "Tree Planting Initiative",
-            eventDescription: "Plant trees in urban areas to improve air quality.",
-            location: {
-                city: "Austin",
-                state: "Texas"
-            },
-            requiredSkills: "Environmental Awareness",
-            urgency: "Medium",
-            eventDate: "10-12-2024"
-        },
-        {
-            eventName: "Blood Donation Drive",
-            eventDescription: "Organize and manage blood donations for local hospitals.",
-            location: {
-                city: "Austin",
-                state: "Texas"
-            },
-            requiredSkills: "Organization, Teamwork",
-            urgency: "High",
-            eventDate: "11-3-2024"
-        }
-    ];
-
+    const {loggedUser, isAdmin} = useAuth();
+    const [eventList, setEventList] = useState([]);
+    const [attendedEvents, setAttendedEvents] = useState([]);
     const [dropDowns, setDropDowns] = useState(
         new Array(eventList.length).fill(false)
     );
+
+    useEffect(() => {
+        const userID = loggedUser.userID;
+        axios.all([
+            axios.get("http://localhost:3001/api/events/getallevents"),
+            axios.get(`http://localhost:3001/api/users/profile/${userID}`)
+        ])
+        .then(axios.spread((eventsResponse, userResponse) => {
+            setEventList(eventsResponse.data); 
+            setDropDowns(new Array(eventsResponse.data.length).fill(false));
+            setAttendedEvents(userResponse.data.attendedEvents);
+        }))
+        .catch(error => {
+            console.error("There was an error fetching the events!", error);
+        });
+    }, []);
+
+    useEffect(() => {
+        console.log(attendedEvents);
+    }, [attendedEvents]);
 
     const toggleDropdown = (index) => {
         const updatedDropdowns = [...dropDowns];
@@ -121,14 +52,14 @@ export default function EventList(){
 
     const handleApply = (e, index) => {
         e.preventDefault();
-        axios.post("http://localhost:3001/api/users/eventapply", eventList[index])
+        const userId = loggedUser.userID;
+        axios.post(`http://localhost:3001/api/events/eventapply/${userId}`, eventList[index])
         .then(result => {
             console.log(result);
         })
         .catch(err => {
             console.log(err);
         })
-        // console.log(eventList[index]);
     }
 
     return(
@@ -153,10 +84,10 @@ export default function EventList(){
                 </div>
             </div>
             <div className="h-3/5 absolute inset-x-0 bottom-0 flex justify-center py-3">
-                <ul className="mt-4 flex flex-col gap-3 overflow-auto">
+                <ul className="mt-4 flex flex-col gap-2 overflow-auto">
                     {eventList.map((event, index) => (
                     <li key={index}>
-                        <button className="bg-gray-200 hover:bg-gray-300 w-[72rem] p-5 rounded-md flex flex-col items-center justify-between" onClick={() => toggleDropdown(index)}>
+                        <button className={`bg-gray-200 hover:bg-gray-300 w-[72rem] p-5 ${dropDowns[index] ? "rounded-t-md" : "rounded-md"} flex flex-col items-center justify-between`} onClick={() => toggleDropdown(index)}>
                             <div className="flex items-center justify-between w-full">
                                 <h1 className="text-3xl font-light">
                                     {event.eventName}
@@ -174,18 +105,46 @@ export default function EventList(){
                                     {event.eventDate}
                                 </h1>
                             </div>
-
-                            {dropDowns[index] && (
-                                <div className="flex items-center justify-between w-full mt-4">
-                                    <div>
-                                        {event.eventDescription}
-                                    </div>
-                                    <button className="bg-primaryblue hover:bg-primaryblue-light text-white px-5 py-2" onClick={(e) => handleApply(e, index)}>
-                                        Apply
-                                    </button>
-                                </div>
-                            )}
                         </button>
+
+                        {dropDowns[index] && (
+                            <div className="flex flex-col items-center justify-between w-full gap-2 bg-gray-300 rounded-b-md px-5 py-4 mb-2">
+                                <div className="w-full text-left">
+                                    {event.eventDescription}
+                                </div>
+                                <div className="flex items-center w-full justify-between bg-gray">
+                                    <div className="flex gap-3">
+                                        {event.requiredSkills.map((skill, index) => (
+                                            <h1 key={index} className="bg-gray-400 px-3 py-2 text-sm rounded-md">
+                                                {skill}
+                                            </h1>
+                                        ))}
+                                    </div>
+                                    <div className="flex items-center gap-5">
+                                        {isAdmin ? (
+                                            <div className="flex gap-5">
+                                                <button className="text-primaryblue hover:underline hover:underline-offset-2">
+                                                    Update
+                                                </button>
+                                                <button className="text-primaryblue hover:underline hover:underline-offset-2">
+                                                    Remove
+                                                </button>
+                                            </div>
+                                        ) : null}
+
+                                        {attendedEvents.includes(event._id) ? (
+                                            <button className="bg-primaryblue hover:bg-primaryblue-light text-white px-5 py-2">
+                                                Applied
+                                            </button>
+                                        ) : (
+                                        <button className="bg-primaryblue hover:bg-primaryblue-light text-white px-5 py-2" onClick={(e) => handleApply(e, index)}>
+                                            Apply
+                                        </button>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </li>
                 ))}
                 </ul>
