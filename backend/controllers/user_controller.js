@@ -10,10 +10,6 @@ const handleLogin = async (req, res) => {
         if (searchUser) {
             const valid = await bcrypt.compare(password, searchUser.password);
             if (valid) {
-                // res.json({
-                //     message: "login successful!",
-                //     username: searchUser.username,
-                // })
                 res.json(searchUser);
             } else {
                 res.status(400).json({ message: "Invalid password." })
@@ -125,8 +121,7 @@ const handleNotifications = async (req, res) => { // edits notification settings
 const addSkill = async (req, res) => {
     const { userID } = req.params;
     const { newSkill } = req.body;
-    // console.log("Skill to add:", newSkill)
-    // console.log("ID to add the skill to:", userID);
+
     try {
         const user = await userModel.findById(userID);
         if (!user) {
@@ -146,7 +141,6 @@ const addSkill = async (req, res) => {
 const removeSkill = async (req, res) => {
     try {
         const { userID, skill } = req.params;
-        // console.log("Skill to remove:", skill);
         const user = await userModel.findByIdAndUpdate(
             userID,
             { $pull: { skills: skill } },
@@ -165,7 +159,6 @@ const removeSkill = async (req, res) => {
 const getVolunteerHistory = async (req, res) => {
     try {
         const userID = req.params.userID;
-        // Find the user by ID and populate the attendedEvents array
         const user = await userModel.findById(userID).populate("attendedEvents");
         if (!user) {
             return res.status(404).json({
@@ -234,7 +227,6 @@ const handleMatching = async (req, res) => {
 
 const getData = async (req, res) => { // gets all available events and volunteers
     try {
-        const userId = req.params.userId;
         const events = await eventModel.find();
         const volunteers = await userModel.find();
         res.json({ events, volunteers });
@@ -248,8 +240,7 @@ const editUserInfo = async (req, res) => {
     try {
         const { userID } = req.params;
         const { newValues } = req.body;
-        // console.log(userID, newValues);
-        // res.json("Received");
+
         const updatedUser = await userModel.findByIdAndUpdate(
             userID,
             { $set: newValues },

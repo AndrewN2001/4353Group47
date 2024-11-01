@@ -44,7 +44,7 @@ const VolunteerMatching = () => {
 
     return (
         <div className="min-h-screen bg-gray-100 p-8">
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-7xl mx-auto ">
                 {/* Title */}
                 <h1 className="text-4xl font-bold text-center mb-8">Volunteer Matching</h1>
 
@@ -56,7 +56,7 @@ const VolunteerMatching = () => {
                         <div className="h-64 overflow-y-auto">
                             <ul className="space-y-4">
                                 {volunteers
-                                    .filter(volunteer => volunteer.role === "Volunteer")
+                                    .filter(volunteer => volunteer.role === "Volunteer") // only displays volunteers, not managers or admins
                                     .map((volunteer, index) => (
                                         <li key={index} className="p-4 bg-gray-100 rounded">{volunteer.name.firstName + " " + volunteer.name.lastName}</li>
                                     ))}

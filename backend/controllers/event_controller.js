@@ -5,32 +5,32 @@ const combineDateTime = (date, time) => {
     return new Date(`${date}T${time}:00`);
 }
 
-const sampleEvents = {
-    event1: {
-        eventName: "Animal Shelter",
-        eventDescription: "asdlknasdklnasd",
-        location: {
-            city: "Houston",
-            state: "TX"
-        },
-        requiredSkills: ["Test", "Test2", "Test3"],
-        urgency: "low",
-        startDate: '2024-10-15T09:00:00',
-        endDate: '2024-10-15T12:00:00'
-    },
-    event2: {
-        eventName: "Community Clean Up",
-        eventDescription: "Join us for a community cleanup day!",
-        location: {
-            city: "Houston",
-            state: "TX"
-        },
-        requiredSkills: ['cleaning', 'organization'],
-        urgency: "medium",
-        startDate: '2024-10-15T09:00:00',
-        endDate: '2024-10-15T12:00:00'
-    }
-}
+// const sampleEvents = {
+//     event1: {
+//         eventName: "Animal Shelter",
+//         eventDescription: "asdlknasdklnasd",
+//         location: {
+//             city: "Houston",
+//             state: "TX"
+//         },
+//         requiredSkills: ["Test", "Test2", "Test3"],
+//         urgency: "low",
+//         startDate: '2024-10-15T09:00:00',
+//         endDate: '2024-10-15T12:00:00'
+//     },
+//     event2: {
+//         eventName: "Community Clean Up",
+//         eventDescription: "Join us for a community cleanup day!",
+//         location: {
+//             city: "Houston",
+//             state: "TX"
+//         },
+//         requiredSkills: ['cleaning', 'organization'],
+//         urgency: "medium",
+//         startDate: '2024-10-15T09:00:00',
+//         endDate: '2024-10-15T12:00:00'
+//     }
+// }
 
 const createEvent = async (req, res) => {
     try{
@@ -97,14 +97,12 @@ const updateEvent = async(req, res) => {
 const getEvents = async (req, res) => { // would get every event that the user signed up for
     try {
         const { userId }  = req.params;
-        // res.json(volunteers[0].appliedEvents);
         const user = await userModel.findById(userId, 'attendedEvents').populate('attendedEvents');
         if (!user) {
             return res.status(404).json({
                 message: "User not found"
             })
         }
-        console.log(user.attendedEvents);
         res.status(200).json(user.attendedEvents);
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -117,7 +115,6 @@ const getEvents = async (req, res) => { // would get every event that the user s
 const EventSignUp = async (req, res) => { // called when user signs up for specific event and adds it to their appliedEvents field
     try {
         const {userId} = req.params;
-        // res.json(req.body);
         const eventID = req.body._id;
         const user = await userModel.findById(userId);
         if (!user) {
@@ -130,13 +127,33 @@ const EventSignUp = async (req, res) => { // called when user signs up for speci
         }
 
         res.status(200).json({
-            message: "Event added to user successfully", userId
+            message: "Event added to user successfully", userId, eventID
         })
     } catch (error) {
         console.error("Error fetching data:", error);
         res.status(500).json({
             message: "Server Error",
         })
+    }
+}
+
+const eventWithdraw = async (req, res) => {
+    try{
+        const {userId, eventId} = req.params;
+        const user = await userModel.findByIdAndUpdate(
+            userId,
+            { $pull: {
+                attendedEvents: eventId
+            }},
+            { new : true }
+        );
+        if (!user){
+            return res.status(404).json({ message: "User not found" });
+        }
+        return res.status(200).json({message: "Event successfully removed from the user."});
+    } catch (error){
+        console.error(error);
+        res.status(500).json({message: "Server error"})
     }
 }
 
@@ -147,5 +164,6 @@ module.exports = {
     updateEvent,
     getEvents,
     EventSignUp,
-    sampleEvents
+    eventWithdraw
+    // sampleEvents
 }

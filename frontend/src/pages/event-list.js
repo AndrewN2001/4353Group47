@@ -6,20 +6,30 @@ import {useAuth} from "../middleware/user-vertification"
 export default function EventList(){
     const {loggedUser, isAdmin} = useAuth();
     const [eventList, setEventList] = useState([]);
+    const [attendedEvents, setAttendedEvents] = useState([]);
     const [dropDowns, setDropDowns] = useState(
         new Array(eventList.length).fill(false)
     );
 
     useEffect(() => {
-        axios.get("http://localhost:3001/api/events/getallevents")
-            .then(response => {
-                setEventList(response.data); 
-                setDropDowns(new Array(response.data.length).fill(false)); 
-            })
-            .catch(error => {
-                console.error("There was an error fetching the events!", error);
-            });
+        const userID = loggedUser.userID;
+        axios.all([
+            axios.get("http://localhost:3001/api/events/getallevents"),
+            axios.get(`http://localhost:3001/api/users/profile/${userID}`)
+        ])
+        .then(axios.spread((eventsResponse, userResponse) => {
+            setEventList(eventsResponse.data); 
+            setDropDowns(new Array(eventsResponse.data.length).fill(false));
+            setAttendedEvents(userResponse.data.attendedEvents);
+        }))
+        .catch(error => {
+            console.error("There was an error fetching the events!", error);
+        });
     }, []);
+
+    useEffect(() => {
+        console.log(attendedEvents);
+    }, [attendedEvents]);
 
     const toggleDropdown = (index) => {
         const updatedDropdowns = [...dropDowns];
@@ -50,7 +60,6 @@ export default function EventList(){
         .catch(err => {
             console.log(err);
         })
-        // console.log(eventList[index]);
     }
 
     return(
@@ -75,10 +84,10 @@ export default function EventList(){
                 </div>
             </div>
             <div className="h-3/5 absolute inset-x-0 bottom-0 flex justify-center py-3">
-                <ul className="mt-4 flex flex-col gap-3 overflow-auto">
+                <ul className="mt-4 flex flex-col gap-2 overflow-auto">
                     {eventList.map((event, index) => (
                     <li key={index}>
-                        <button className="bg-gray-200 hover:bg-gray-300 w-[72rem] p-5 rounded-md flex flex-col items-center justify-between" onClick={() => toggleDropdown(index)}>
+                        <button className={`bg-gray-200 hover:bg-gray-300 w-[72rem] p-5 ${dropDowns[index] ? "rounded-t-md" : "rounded-md"} flex flex-col items-center justify-between`} onClick={() => toggleDropdown(index)}>
                             <div className="flex items-center justify-between w-full">
                                 <h1 className="text-3xl font-light">
                                     {event.eventName}
@@ -96,35 +105,46 @@ export default function EventList(){
                                     {event.eventDate}
                                 </h1>
                             </div>
+                        </button>
 
-                            {dropDowns[index] && (
-                                <div className="flex flex-col items-center justify-between w-full gap-2 mt-4">
-                                    <div className="w-full text-left">
-                                        {event.eventDescription}
+                        {dropDowns[index] && (
+                            <div className="flex flex-col items-center justify-between w-full gap-2 bg-gray-300 rounded-b-md px-5 py-4 mb-2">
+                                <div className="w-full text-left">
+                                    {event.eventDescription}
+                                </div>
+                                <div className="flex items-center w-full justify-between bg-gray">
+                                    <div className="flex gap-3">
+                                        {event.requiredSkills.map((skill, index) => (
+                                            <h1 key={index} className="bg-gray-400 px-3 py-2 text-sm rounded-md">
+                                                {skill}
+                                            </h1>
+                                        ))}
                                     </div>
-                                    <div className="flex items-center w-full justify-between bg-gray">
-                                        <div className="flex gap-3">
-                                            {event.requiredSkills.map((skill, index) => (
-                                                <h1 key={index} className="bg-gray-400 px-3 py-2 text-sm rounded-md">
-                                                    {skill}
-                                                </h1>
-                                            ))}
-                                        </div>
-                                        <div className="flex gap-3">
-                                            {isAdmin ? (
+                                    <div className="flex items-center gap-5">
+                                        {isAdmin ? (
+                                            <div className="flex gap-5">
+                                                <button className="text-primaryblue hover:underline hover:underline-offset-2">
+                                                    Update
+                                                </button>
                                                 <button className="text-primaryblue hover:underline hover:underline-offset-2">
                                                     Remove
                                                 </button>
-                                            ) : null}
-                                            <button className="bg-primaryblue hover:bg-primaryblue-light text-white px-5 py-2" onClick={(e) => handleApply(e, index)}>
-                                                Apply
+                                            </div>
+                                        ) : null}
+
+                                        {attendedEvents.includes(event._id) ? (
+                                            <button className="bg-primaryblue hover:bg-primaryblue-light text-white px-5 py-2">
+                                                Applied
                                             </button>
-                                        </div>
+                                        ) : (
+                                        <button className="bg-primaryblue hover:bg-primaryblue-light text-white px-5 py-2" onClick={(e) => handleApply(e, index)}>
+                                            Apply
+                                        </button>
+                                        )}
                                     </div>
-                                    
                                 </div>
-                            )}
-                        </button>
+                            </div>
+                        )}
                     </li>
                 ))}
                 </ul>

@@ -24,9 +24,9 @@ export default function Events(){
         })
     }, [])
 
-    useEffect(() => {
-        console.log(attendEvents);
-    }, [attendEvents])
+    // useEffect(() => {
+    //     console.log(attendEvents);
+    // }, [attendEvents])
 
     const [dropDowns, setDropDowns] = useState(
         new Array(attendEvents.length).fill(false)
@@ -45,6 +45,25 @@ export default function Events(){
     const handleToggle = (index) => {
         setOpenIndex(openIndex === index ? null : index);
     };
+
+    const handleWithdraw = (eventID) => {
+        const userID = loggedUser.userID;
+        try{
+            axios.delete(`http://localhost:3001/api/events/withdrawEvent/${userID}/${eventID}`)
+            .then(response => {
+                console.log(response);
+                setAttendEvents((attendEvents) => 
+                    attendEvents.filter(event => event._id !== eventID)
+                )
+
+                setVolunteerData((attendEvents) => 
+                    attendEvents.filter(event => event._id !== eventID)
+                )
+            })
+        } catch (error) {
+            console.error("Error adding skill:", error);
+        }
+    }
 
     return(
         <div className="mt-24 px-7 w-full h-full">
@@ -87,7 +106,7 @@ export default function Events(){
                                     <div>
                                         {event.eventDescription}
                                     </div>
-                                    <button className="bg-primaryblue hover:bg-primaryblue-light text-white px-5 py-2">
+                                    <button className="bg-primaryblue hover:bg-primaryblue-light text-white px-5 py-2" onClick={() => handleWithdraw(event._id)}>
                                         Withdraw
                                     </button>
                                 </div>
