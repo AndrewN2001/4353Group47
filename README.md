@@ -27,6 +27,9 @@ To use Voluntify, follow these steps:
 ## **Testing Coverage Report**
 - Located in **`backend/coverage/lcov-report/index.html`**
 
+## **NoSQL Schemas**
+- Located in **`backend/models/user.js`** and **`backend/models/event.js`**
+
 ## **Troubleshooting**
 
 1. The main solution for backend running is to remove the node_modules folder from the directory and reinstall:
