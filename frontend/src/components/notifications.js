@@ -1,22 +1,3 @@
-<<<<<<< HEAD
-import React, {useState} from "react"
-import axios from "axios";
-
-export default function Notifications(){
-    const [notifications, setNotifications] = useState({
-        newAssignments: true,
-        newUpdates: true,
-        newReminders: true
-    })
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // console.log(notifications);
-        const userID = "someUserId";
-        axios.post(`http://localhost:3001/api/users/notifications/${userID}`, {notifications})
-        .then(result => {
-            console.log(result);
-=======
 import React, {useState, useEffect} from "react"
 import { useAuth } from "../middleware/user-vertification";
 import axios from "axios";
@@ -62,7 +43,6 @@ export default function Notifications(){
         })
         .catch(error => {
             console.error("Error fetching user data:", error);
->>>>>>> develop
         })
     }
 
@@ -82,15 +62,9 @@ export default function Notifications(){
                             <input 
                                 type="checkbox" 
                                 value=""
-<<<<<<< HEAD
-                                checked={notifications.newAssignments}
-                                className="sr-only peer"
-                                onChange={(e) => setNotifications({...notifications, newAssignments: e.target.checked})}
-=======
                                 checked={notifications.newEventAssignments}
                                 className="sr-only peer"
                                 onChange={() => handleBoxChange("newEventAssignments")}
->>>>>>> develop
                             />
                             <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div>
                         </label>
@@ -105,15 +79,9 @@ export default function Notifications(){
                             <input 
                                 type="checkbox" 
                                 value=""
-<<<<<<< HEAD
-                                checked={notifications.newUpdates}
-                                className="sr-only peer"
-                                onChange={(e) => setNotifications({...notifications, newUpdates: e.target.checked})}
-=======
                                 checked={notifications.newEventUpdates}
                                 className="sr-only peer"
                                 onChange={() => handleBoxChange("newEventUpdates")}
->>>>>>> develop
                             />
                             <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div>
                         </label>
@@ -128,15 +96,9 @@ export default function Notifications(){
                             <input 
                                 type="checkbox" 
                                 value=""
-<<<<<<< HEAD
-                                checked={notifications.newReminders}
-                                className="sr-only peer"
-                                onChange={(e) => setNotifications({...notifications, newReminders: e.target.checked})}
-=======
                                 checked={notifications.newEventReminders}
                                 className="sr-only peer"
                                 onChange={() => handleBoxChange("newEventReminders")}
->>>>>>> develop
                             />
                             <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div>
                         </label>

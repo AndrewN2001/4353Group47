@@ -37,17 +37,12 @@ function EventManagementForm() {
       axios.post("http://localhost:3001/api/events/createevent", {eventData})
       .then(result => {
         console.log(result);
-<<<<<<< HEAD
-      })
-      alert('Event created successfully!');
-=======
         alert('Event created successfully!');
         navigate('/eventlist')
       })
       .catch(err => {
         console.log(err);
       })
->>>>>>> develop
     } else {
       alert('Please fill out all required fields.');
     }
