@@ -1,6 +1,9 @@
 const userModel = require("../models/user")
 const eventModel = require('../models/event')
 const bcrypt = require('bcrypt')
+const PDF = require('pdfkit');
+const fs = require('fs');
+const createCSV = require('csv-writer').createObjectCsvWriter;
 const { events, volunteers } = require('../global_arrays/data');
 
 const handleLogin = async (req, res) => {
@@ -57,7 +60,7 @@ const handleRegister = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
     try {
-        const userID = req.params.userID; 
+        const userID = req.params.userID;
         const userProfile = await userModel.findById(userID);
         if (!userProfile) {
             return res.status(404).json({
@@ -195,7 +198,7 @@ const handleMatching = async (req, res) => {
                 events.forEach(event => {
                     const eventDay = getDayOfWeek(event.startDate);
 
-                    const hours = event.startDate.getUTCHours().toString().padStart(2, '0'); 
+                    const hours = event.startDate.getUTCHours().toString().padStart(2, '0');
                     const minutes = event.startDate.getUTCMinutes().toString().padStart(2, '0');
                     const eventStartTime = `${hours}:${minutes}`;
 
@@ -284,6 +287,70 @@ const editAvailability = async (req, res) => {
     }
 }
 
+const volunteerReporting = async (req, res) => {
+    try {
+        const reportData = await userModel.find({ role: "Volunteer" }).populate("attendedEvents");
+
+        const csvWriter = createCSV({
+            path: 'volunteer_report.csv',
+            header: [
+                { id: 'first_name', title: 'First Name' },
+                { id: 'last_name', title: 'Last Name' },
+                { id: 'email', title: 'Email' },
+                { id: 'phoneNumber', title: 'Phone Number' },
+                { id: 'events', title: 'Attended Events' }
+            ]
+        });
+
+        const csvData = reportData.map(volunteer => ({
+            first_name: volunteer.name.firstName,
+            last_name: volunteer.name.lastName,
+            email: volunteer.email,
+            phoneNumber: volunteer.phoneNumber,
+            events: volunteer.attendedEvents.map(e => {
+                const location = `${e.location.city}, ${e.location.state}`;
+                const eventStartTime = e.startDate.toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                });
+                return `${e.eventName} (${eventStartTime}) at ${location}`;
+            }).join('; ')
+
+        }));
+        console.log(csvData);
+        await csvWriter.writeRecords(csvData);
+      
+        res.json({ message: "Report generated successfully!", files: { csv: 'volunteer_report.csv'}});
+
+        // const pdfPath = 'volunteer_report.pdf';
+        // const doc = new PDF();
+        // doc.pipe(fs.createWriteStream(pdfPath));
+        // doc.fontSize(20).text('Volunteer Report', { align: 'center' });
+        // doc.moveDown();
+        // reportData.forEach(vol => {
+        //     doc.fontSize(16).text(`Name: ${vol.name}`);
+        //     doc.fontSize(12).text(`Email: ${vol.email}`);
+        //     doc.text(`Phone: ${vol.phoneNumber}`);
+        //     doc.text('Events Attended:');
+        //     vol.attendedEvents.forEach(event => {
+        //         doc.text(`  - ${event.eventName} (${event.eventDate}) at ${event.eventLocation}`);
+        //     });
+        //     doc.moveDown();
+        // });
+        // doc.end();
+
+        // res.json({ message: "Report generated successfully!", files: { csv: '/path/to/volunteer_report.csv', pdf: '/path/to/volunteer_report.pdf' } });
+
+    } catch (error) {
+        console.error("Error generating report:", error);
+        res.status(500).json({ message: "Server Error" });
+    }
+}
+
 module.exports = {
     handleLogin,
     handleRegister,
@@ -296,5 +363,6 @@ module.exports = {
     addSkill,
     removeSkill,
     editUserInfo,
-    editAvailability
+    editAvailability,
+    volunteerReporting
 }

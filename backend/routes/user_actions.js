@@ -14,5 +14,6 @@ router.put('/:userID/addSkill', userController.addSkill);
 router.delete('/:userID/removeSkill/:skill', userController.removeSkill);
 router.put('/:userID/editInfo', userController.editUserInfo)
 router.put('/:userID/editAvailability', userController.editAvailability);
+router.get('/volunteers-report', userController.volunteerReporting);
 
 module.exports = router;

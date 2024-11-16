@@ -9,6 +9,7 @@ import HomePage from "./pages/home-page";
 import VolunteerMatching from "./pages/volunteer-matching";
 import Recover from "./pages/forgot-password";
 import EventList from "./pages/event-list";
+import Reports from "./pages/reports"
 import {
   BrowserRouter,
   Routes,
@@ -76,6 +77,11 @@ export default function App(){
               exact
               path="/about"
               element={<About/>}
+            />
+            <Route 
+              exact
+              path="/reports"
+              element={<Reports/>}
             />
           </Routes>
         </BrowserRouter>
