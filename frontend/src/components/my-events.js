@@ -46,6 +46,19 @@ export default function Events(){
         setOpenIndex(openIndex === index ? null : index);
     };
 
+    const getUrgencyColor = (urgency) => {
+        switch (urgency) {
+            case "High":
+                return "bg-red-200";   // Red for high urgency
+            case "Medium":
+                return "bg-yellow-200"; // Yellow for medium urgency
+            case "Low":
+                return "bg-green-200";  // Green for low urgency
+            default:
+                return "bg-gray-300";   // Default color for unknown urgency
+        }
+    }
+
     const handleWithdraw = (eventID) => {
         const userID = loggedUser.userID;
         try{
@@ -87,7 +100,7 @@ export default function Events(){
                                 <h1 className="text-3xl font-light">
                                     {event.eventName}
                                 </h1>
-                                <div className={`rounded-full w-7 h-7 flex justify-center items-center font-semibold text-xl`}>
+                                <div className={`rounded-full w-7 h-7 flex justify-center items-center font-semibold text-xl ${getUrgencyColor(event.urgency)}`}>
                                     !
                                 </div>
                             </div>
