@@ -3,15 +3,17 @@ import { BsPersonFill } from "react-icons/bs";
 import { IoIosNotifications } from "react-icons/io";
 import { IoClose, IoCalendarClear } from "react-icons/io5";
 import { MdOutlineModeEdit, MdOutlineCheck } from "react-icons/md";
+import { RiAdminFill } from "react-icons/ri";
 import Notifications from "../components/notifications";
 import Events from "../components/my-events";
 import axios from "axios"
 import {useAuth} from "../middleware/user-vertification";
 import { useNavigate } from "react-router-dom";
+import AdminPage from "../components/admin-page";
 
 export default function UserProfile() {
     const navigate = useNavigate();
-    const {loggedUser, logout, setAdmin} = useAuth();
+    const {loggedUser, logout, setAdmin, isAdmin} = useAuth();
 
     // list of states, needs to be reduced using the hook useReducer
     const [selectedPage, setSelected] = useState("dashboard")
@@ -212,6 +214,16 @@ export default function UserProfile() {
                                         User Dashboard
                                     </button>
                                 </li>
+
+                                {isAdmin && (
+                                    <li>
+                                        <button className={`flex gap-2 items-center justify-center ${selectedPage === "admin" ? "bg-primaryblue-light" : ""} hover:bg-primaryblue-light w-full py-3`} onClick={() => setSelected("admin")}>
+                                            <RiAdminFill/>
+                                            Admin
+                                        </button>
+                                    </li>
+                                )}
+
                                 <li>
                                     <button className={`flex gap-2 items-center justify-center ${selectedPage === "events" ? "bg-primaryblue-light" : ""} hover:bg-primaryblue-light w-full py-3`} onClick={() => setSelected("events")}>
                                         <IoCalendarClear />
@@ -233,6 +245,12 @@ export default function UserProfile() {
                             </ul>
                         </div>
                     </div>
+
+                    {selectedPage === "admin" && (
+                        <div className="row-span-2 col-span-3">
+                            <AdminPage/>
+                        </div>
+                    )}
 
                     {selectedPage === "dashboard" && (
                         <div className="col-span-3 row-span-3">
