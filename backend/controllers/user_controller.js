@@ -287,71 +287,79 @@ const editAvailability = async (req, res) => {
     }
 }
 
-const volunteersCSV = async (req, res) => {
+const volunteersReports = async (req, res) => {
     try {
+        const fileType = req.params.fileType;
         const reportData = await userModel.find({ role: "Volunteer" }).populate("attendedEvents");
 
-        const csvWriter = createCSV({
-            path: 'volunteer_report.csv',
-            header: [
-                { id: 'first_name', title: 'First Name' },
-                { id: 'last_name', title: 'Last Name' },
-                { id: 'email', title: 'Email' },
-                { id: 'phoneNumber', title: 'Phone Number' },
-                { id: 'events', title: 'Attended Events' }
-            ]
-        });
+        if (fileType === "csv") {
+            const csvWriter = createCSV({
+                path: 'volunteer_report.csv',
+                header: [
+                    { id: 'first_name', title: 'First Name' },
+                    { id: 'last_name', title: 'Last Name' },
+                    { id: 'email', title: 'Email' },
+                    { id: 'phoneNumber', title: 'Phone Number' },
+                    { id: 'events', title: 'Attended Events' }
+                ]
+            });
 
-        const csvData = reportData.map(volunteer => ({
-            first_name: volunteer.name.firstName,
-            last_name: volunteer.name.lastName,
-            email: volunteer.emailAddress,
-            phoneNumber: volunteer.phoneNumber,
-            events: volunteer.attendedEvents.map(e => {
-                const location = `${e.location.city}, ${e.location.state}`;
-                const eventStartTime = e.startDate.toLocaleString('en-US', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false
+            const csvData = reportData.map(volunteer => ({
+                first_name: volunteer.name.firstName,
+                last_name: volunteer.name.lastName,
+                email: volunteer.emailAddress,
+                phoneNumber: volunteer.phoneNumber,
+                events: volunteer.attendedEvents.map(e => {
+                    const location = `${e.location.city}, ${e.location.state}`;
+                    const eventStartTime = `${e.startDate.getUTCFullYear()}-${(e.startDate.getUTCMonth() + 1)
+                        .toString()
+                        .padStart(2, '0')}-${e.startDate.getUTCDate().toString().padStart(2, '0')} ${e.startDate
+                            .getUTCHours()
+                            .toString()
+                            .padStart(2, '0')}:${e.startDate.getUTCMinutes().toString().padStart(2, '0')}`;
+                    return `${e.eventName} (${eventStartTime}) at ${location}`;
+                }).join('; ')
+
+            }));
+            console.log(csvData);
+            await csvWriter.writeRecords(csvData);
+
+            res.setHeader('Content-Type', 'text/csv');
+            res.setHeader('Content-Disposition', 'attachment; filename="volunteer_report.csv"');
+            res.sendFile(`${process.cwd()}/volunteer_report.csv`);
+        }
+        else if (fileType === "pdf") {
+            console.log("pdf");
+            const pdfPath = 'volunteer_report.pdf';
+            const doc = new PDF();
+            doc.pipe(fs.createWriteStream(pdfPath));
+            doc.fontSize(20).text('Volunteers Report', { align: 'center' });
+            doc.moveDown();
+            reportData.forEach(vol => {
+                doc.fontSize(16).text(`Name: ${vol.name.firstName} ${vol.name.lastName}`);
+                doc.fontSize(12).text(`Email: ${vol.emailAddress}`);
+                doc.text(`Phone: ${vol.phoneNumber}`);
+                doc.text('Events Attended:');
+                vol.attendedEvents.forEach(event => {
+                    doc.text(`  - ${event.eventName} (${event.startDate.getUTCFullYear()}-${(event.startDate.getUTCMonth() + 1)
+                        .toString()
+                        .padStart(2, '0')}-${event.startDate.getUTCDate().toString().padStart(2, '0')} ${event.startDate
+                            .getUTCHours()
+                            .toString()
+                            .padStart(2, '0')}:${event.startDate.getUTCMinutes().toString().padStart(2, '0')}) at ${event.location.city}, ${event.location.state}`);
                 });
-                return `${e.eventName} (${eventStartTime}) at ${location}`;
-            }).join('; ')
-
-        }));
-        console.log(csvData);
-        await csvWriter.writeRecords(csvData);
-
-        res.setHeader('Content-Type', 'text/csv');
-        res.setHeader('Content-Disposition', 'attachment; filename="volunteer_report.csv"');
-        res.sendFile(`${process.cwd()}/volunteer_report.csv`);
-
+                doc.moveDown();
+            });
+            doc.end();
+            res.setHeader('Content-Type', 'text/pdf');
+            res.setHeader('Content-Disposition', 'attachment; filename="volunteer_report.pdf"');
+            res.sendFile(`${process.cwd()}/volunteer_report.pdf`);
+        }
     } catch (error) {
         console.error("Error generating report:", error);
         res.status(500).json({ message: "Server Error" });
     }
 }
-
-// const pdfPath = 'volunteer_report.pdf';
-// const doc = new PDF();
-// doc.pipe(fs.createWriteStream(pdfPath));
-// doc.fontSize(20).text('Volunteer Report', { align: 'center' });
-// doc.moveDown();
-// reportData.forEach(vol => {
-//     doc.fontSize(16).text(`Name: ${vol.name}`);
-//     doc.fontSize(12).text(`Email: ${vol.email}`);
-//     doc.text(`Phone: ${vol.phoneNumber}`);
-//     doc.text('Events Attended:');
-//     vol.attendedEvents.forEach(event => {
-//         doc.text(`  - ${event.eventName} (${event.eventDate}) at ${event.eventLocation}`);
-//     });
-//     doc.moveDown();
-// });
-// doc.end();
-
-// res.json({ message: "Report generated successfully!", files: { csv: '/path/to/volunteer_report.csv', pdf: '/path/to/volunteer_report.pdf' } });
 
 module.exports = {
     handleLogin,
@@ -366,5 +374,5 @@ module.exports = {
     removeSkill,
     editUserInfo,
     editAvailability,
-    volunteersCSV
+    volunteersReports
 }

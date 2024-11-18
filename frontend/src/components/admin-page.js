@@ -1,28 +1,67 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { MdOutlineExpandMore, MdOutlineExpandLess } from "react-icons/md";
 import { useAuth } from "../middleware/user-vertification";
 import axios from "axios";
 
-export default function AdminPage(){
+export default function AdminPage() {
     const [selectedData, setSelectedData] = useState("volunteers");
     const [userList, setUserList] = useState([]);
     const [eventList, setEventList] = useState([]);
-    const {loggedUser} = useAuth();
-    
+    const { loggedUser } = useAuth();
+
     const handleDownload = (fileType) => {
-        if (fileType === "pdf") {
-            console.log("User wants to download a PDF.", selectedData);
-        } else if (fileType === "csv") {
-            console.log("User wants to download a CSV.", selectedData);
+        if (selectedData === "volunteers") {
+            volunteersReports(fileType);
+        }
+        else if (selectedData === "events") {
+            eventsReports(fileType);
         }
     }
 
+    const volunteersReports = async (fileType) => {
+        try {
+            const response = await axios.get(`http://localhost:3001/api/users/volunteers-reports/${fileType}`, {
+                responseType: 'blob'
+            });
+
+            const downloadLink = document.createElement('a');
+            downloadLink.href = window.URL.createObjectURL(response.data);
+            downloadLink.download = `volunteers_report.${fileType}`;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            window.URL.revokeObjectURL(downloadLink.href);
+        } catch (error) {
+            console.error("Error downloading reports:", error);
+            alert("Failed to generate reports.");
+        }
+    };
+
+    const eventsReports = async (fileType) => {
+        try {
+            const response = await axios.get(`http://localhost:3001/api/events/events-reports/${fileType}`, {
+                responseType: 'blob'
+            });
+            const downloadLink = document.createElement('a');
+            downloadLink.href = window.URL.createObjectURL(response.data);
+            downloadLink.download = `events_report.${fileType}`;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            window.URL.revokeObjectURL(downloadLink.href);
+        } catch (error) {
+            console.error("Error downloading reports:", error);
+            alert("Failed to generate reports.");
+        }
+    };
+
+
     useEffect(() => {
         axios.get("http://localhost:3001/api/users/data")
-        .then(response => {
-            setUserList(response.data.volunteers);
-            setEventList(response.data.events);
-        })
+            .then(response => {
+                setUserList(response.data.volunteers);
+                setEventList(response.data.events);
+            })
     }, [])
 
     useEffect(() => {
@@ -40,7 +79,7 @@ export default function AdminPage(){
         setDropdowns(updatedDropdowns);
     }
 
-    return(
+    return (
         <div className="w-full h-full px-7 pt-24">
             <h1 className="text-4xl">
                 Retrieve Reports
@@ -49,7 +88,7 @@ export default function AdminPage(){
             <div className="w-full h-full mt-5 border border-gray-300 flex flex-col">
                 <div className="flex justify-around">
                     <button className={`${selectedData === "volunteers" ? "bg-gray-300" : "bg-gray-200"} hover:bg-gray-300 py-3 h-full w-full`} onClick={() => setSelectedData("volunteers")}>
-                       Volunteers
+                        Volunteers
                     </button>
 
                     <button className={`${selectedData === "events" ? "bg-gray-300" : "bg-gray-200"} hover:bg-gray-300 py-3 h-full w-full`} onClick={() => setSelectedData("events")}>
@@ -61,51 +100,51 @@ export default function AdminPage(){
                     {selectedData === "volunteers" && (
                         <ul className="px-5 flex flex-col gap-2 mt-3">
                             {userList
-                            .filter((user) => user.role === "Volunteer")
-                            .map((user, index) => (
-                                <li key={index}>
-                                    <div className="bg-gray-200 hover:bg-gray-300 w-full min-w-48 p-5 flex justify-between">
-                                        <div className="flex flex-col">
-                                            <h1 className="text-3xl">
-                                                {user.name.firstName + ' ' + user.name.lastName}
-                                            </h1>
-                                            <h2 className="text-sm text-gray-500 mt-1">
-                                                {user.emailAddress + ' | Attended Events: ' + user.attendedEvents.length}
-                                            </h2>
+                                .filter((user) => user.role === "Volunteer")
+                                .map((user, index) => (
+                                    <li key={index}>
+                                        <div className="bg-gray-200 hover:bg-gray-300 w-full min-w-48 p-5 flex justify-between">
+                                            <div className="flex flex-col">
+                                                <h1 className="text-3xl">
+                                                    {user.name.firstName + ' ' + user.name.lastName}
+                                                </h1>
+                                                <h2 className="text-sm text-gray-500 mt-1">
+                                                    {user.emailAddress + ' | Attended Events: ' + user.attendedEvents.length}
+                                                </h2>
+                                            </div>
+
+                                            <button data-tooltip-target="tooltip-right" data-tooltip-placement="right" type="button" className="text-2xl" onClick={() => toggleDropdown(index)}>
+                                                {dropdowns[index] ? (
+                                                    <MdOutlineExpandMore />
+                                                ) : (
+                                                    <MdOutlineExpandLess />
+                                                )}
+                                            </button>
                                         </div>
-                                        
-                                        <button data-tooltip-target="tooltip-right" data-tooltip-placement="right" type="button" className="text-2xl" onClick={() => toggleDropdown(index)}>
-                                            {dropdowns[index] ? (
-                                                <MdOutlineExpandMore/>
-                                            ) : (
-                                                <MdOutlineExpandLess/>
-                                            )}
-                                        </button>
-                                    </div>
 
-                                    {!dropdowns[index] ? (
-                                        <div className="bg-gray-400 rounded-b-md px-5 py-2">
-                                            <h1>
-                                                List of Events:
-                                            </h1>
+                                        {!dropdowns[index] ? (
+                                            <div className="bg-gray-400 rounded-b-md px-5 py-2">
+                                                <h1>
+                                                    List of Events:
+                                                </h1>
 
-                                            <ul>
-                                                {user.attendedEvents.map((eventId, index) => {
-                                                    const event = eventList.find((event) => event._id === eventId)
+                                                <ul>
+                                                    {user.attendedEvents.map((eventId, index) => {
+                                                        const event = eventList.find((event) => event._id === eventId)
 
-                                                    return(
-                                                        <li key={index}>
-                                                            {event ? event.eventName : "Event Not Found"}
-                                                        </li>
-                                                    )
-                                                })}
-                                            </ul>
-                                        </div>
-                                    ) : (
-                                        null
-                                    )}
-                                </li>
-                            ))}
+                                                        return (
+                                                            <li key={index}>
+                                                                {event ? event.eventName : "Event Not Found"}
+                                                            </li>
+                                                        )
+                                                    })}
+                                                </ul>
+                                            </div>
+                                        ) : (
+                                            null
+                                        )}
+                                    </li>
+                                ))}
                         </ul>
                     )}
 

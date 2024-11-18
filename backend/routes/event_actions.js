@@ -9,5 +9,6 @@ router.put('/updateevent/:eventId', eventController.updateEvent);
 router.get('/eventsattending/:userId', eventController.getEvents);
 router.post('/eventapply/:userId', eventController.EventSignUp);
 router.delete('/withdrawEvent/:userId/:eventId', eventController.eventWithdraw);
+router.get('/events-reports/:fileType', eventController.eventsReports);
 
 module.exports = router;
