@@ -287,7 +287,7 @@ const editAvailability = async (req, res) => {
     }
 }
 
-const volunteerReporting = async (req, res) => {
+const volunteersCSV = async (req, res) => {
     try {
         const reportData = await userModel.find({ role: "Volunteer" }).populate("attendedEvents");
 
@@ -305,7 +305,7 @@ const volunteerReporting = async (req, res) => {
         const csvData = reportData.map(volunteer => ({
             first_name: volunteer.name.firstName,
             last_name: volunteer.name.lastName,
-            email: volunteer.email,
+            email: volunteer.emailAddress,
             phoneNumber: volunteer.phoneNumber,
             events: volunteer.attendedEvents.map(e => {
                 const location = `${e.location.city}, ${e.location.state}`;
@@ -323,33 +323,35 @@ const volunteerReporting = async (req, res) => {
         }));
         console.log(csvData);
         await csvWriter.writeRecords(csvData);
-      
-        res.json({ message: "Report generated successfully!", files: { csv: 'volunteer_report.csv'}});
 
-        // const pdfPath = 'volunteer_report.pdf';
-        // const doc = new PDF();
-        // doc.pipe(fs.createWriteStream(pdfPath));
-        // doc.fontSize(20).text('Volunteer Report', { align: 'center' });
-        // doc.moveDown();
-        // reportData.forEach(vol => {
-        //     doc.fontSize(16).text(`Name: ${vol.name}`);
-        //     doc.fontSize(12).text(`Email: ${vol.email}`);
-        //     doc.text(`Phone: ${vol.phoneNumber}`);
-        //     doc.text('Events Attended:');
-        //     vol.attendedEvents.forEach(event => {
-        //         doc.text(`  - ${event.eventName} (${event.eventDate}) at ${event.eventLocation}`);
-        //     });
-        //     doc.moveDown();
-        // });
-        // doc.end();
-
-        // res.json({ message: "Report generated successfully!", files: { csv: '/path/to/volunteer_report.csv', pdf: '/path/to/volunteer_report.pdf' } });
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', 'attachment; filename="volunteer_report.csv"');
+        res.sendFile(`${process.cwd()}/volunteer_report.csv`);
 
     } catch (error) {
         console.error("Error generating report:", error);
         res.status(500).json({ message: "Server Error" });
     }
 }
+
+// const pdfPath = 'volunteer_report.pdf';
+// const doc = new PDF();
+// doc.pipe(fs.createWriteStream(pdfPath));
+// doc.fontSize(20).text('Volunteer Report', { align: 'center' });
+// doc.moveDown();
+// reportData.forEach(vol => {
+//     doc.fontSize(16).text(`Name: ${vol.name}`);
+//     doc.fontSize(12).text(`Email: ${vol.email}`);
+//     doc.text(`Phone: ${vol.phoneNumber}`);
+//     doc.text('Events Attended:');
+//     vol.attendedEvents.forEach(event => {
+//         doc.text(`  - ${event.eventName} (${event.eventDate}) at ${event.eventLocation}`);
+//     });
+//     doc.moveDown();
+// });
+// doc.end();
+
+// res.json({ message: "Report generated successfully!", files: { csv: '/path/to/volunteer_report.csv', pdf: '/path/to/volunteer_report.pdf' } });
 
 module.exports = {
     handleLogin,
@@ -364,5 +366,5 @@ module.exports = {
     removeSkill,
     editUserInfo,
     editAvailability,
-    volunteerReporting
+    volunteersCSV
 }
