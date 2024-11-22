@@ -6,6 +6,8 @@ import {useAuth} from "../middleware/user-vertification"
 export default function EventList(){
     const {loggedUser, isAdmin, darkMode} = useAuth();
     const [eventList, setEventList] = useState([]);
+    const [filter, setFilter] = useState("");
+    const [filteredList, setFilteredEvents] = useState([]);
     const [attendedEvents, setAttendedEvents] = useState([]);
     const [dropDowns, setDropDowns] = useState(
         new Array(eventList.length).fill(false)
@@ -28,8 +30,10 @@ export default function EventList(){
     }, []);
 
     useEffect(() => {
-        console.log(attendedEvents);
-    }, [attendedEvents]);
+        if (eventList.length > 0){
+            setFilteredEvents(eventList);
+        }
+    }, [eventList]);
 
     const toggleDropdown = (index) => {
         const updatedDropdowns = [...dropDowns];
@@ -62,6 +66,18 @@ export default function EventList(){
         })
     }
 
+    const handleFilterChange = (e) => {
+        const value = e.target.value.toLowerCase();
+        setFilter(value);
+
+        const filtered = eventList.filter((event) => 
+            event.eventName.toLowerCase().includes(value) || 
+            event.location.city.toLowerCase().includes(value) || 
+            event.location.state.toLowerCase().includes(value)
+        )
+        setFilteredEvents(filtered)
+    }
+
     return(
         <div className={`min-h-screen relative ${darkMode ? "bg-gray-900" : null}`}>
             <div className="h-2/5 absolute inset-x-0 top-0 flex items-end justify-center">
@@ -74,6 +90,8 @@ export default function EventList(){
                             className={`${darkMode ? "bg-gray-700 placeholder-gray-300 text-gray-300" : "bg-gray-300"} placeholder-black px-5 py-2 rounded-md w-[54rem] flex items-center gap-3`}
                             type="text"
                             placeholder="Search for Events"
+                            value={filter}
+                            onChange={handleFilterChange}
                         />
                         {isAdmin ? (
                             <a className={`${darkMode ? "bg-gray-600 text-gray-300 hover:bg-gray-700" : "bg-gray-300"} hover:bg-gray-400 rounded-md px-5 flex items-center`} href="/eventform">
@@ -85,11 +103,11 @@ export default function EventList(){
             </div>
             <div className="h-3/5 absolute inset-x-0 bottom-0 flex justify-center py-3">
                 <ul className="mt-4 flex flex-col gap-2 overflow-auto">
-                    {eventList.map((event, index) => (
+                    {filteredList.map((event, index) => (
                     <li key={index}>
                         <button className={`${darkMode? "bg-gray-800" :"bg-gray-200 hover:bg-gray-300"} w-[72rem] p-5 ${dropDowns[index] ? "rounded-t-md" : "rounded-md"} flex flex-col items-center justify-between`} onClick={() => toggleDropdown(index)}>
                             <div className="flex items-center justify-between w-full">
-                                <h1 className={`text-3xl font-light text-gray-300`}>
+                                <h1 className={`text-3xl font-light ${darkMode ? "text-gray-300" : null}`}>
                                     {event.eventName}
                                 </h1>
                                 <div className={`rounded-full ${getUrgencyColor(event.urgency)} w-7 h-7 flex justify-center items-center font-semibold text-xl`}>
