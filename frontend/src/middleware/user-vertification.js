@@ -8,17 +8,20 @@ export const useAuth = () => {
 
 export const AuthProvider = ({children}) => {
     const [isLoggedIn, setLoggedIn] = useState(false);
-    // const [loggedUser, setLoggedUser] = useState(null);
     const [loggedUser, setLoggedUser] = useState({
         name: null,
         userID: null,
     });
     const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading] = useState(true);
-
+    const [darkMode, setDarkMode] = useState(() => {
+        const storedDarkMode = localStorage.getItem("darkMode");
+        return storedDarkMode === "true";
+    });
     useEffect(() => {
         const storedUser = localStorage.getItem("loggedUser")
         const storedAdmin = localStorage.getItem("isAdmin");
+
         if (storedUser) {
             // console.log(storedUser);
             const user = JSON.parse(storedUser);
@@ -36,6 +39,10 @@ export const AuthProvider = ({children}) => {
         }
         setLoading(false);
     }, []);
+
+    useEffect(() => {
+        localStorage.setItem("darkMode", darkMode ? "true" : "false")
+    }, [darkMode])
 
     const login = (name, userID, attendedEvents) => {
         setLoggedIn(true);
@@ -63,7 +70,7 @@ export const AuthProvider = ({children}) => {
     }
 
     return(
-        <AuthContext.Provider value={{isLoggedIn, loggedUser, login, logout, setIsAdmin, isAdmin, setAdmin}}>
+        <AuthContext.Provider value={{isLoggedIn, loggedUser, login, logout, setIsAdmin, isAdmin, setAdmin, darkMode, setDarkMode}}>
             {!loading && children}
         </AuthContext.Provider>
     )

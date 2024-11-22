@@ -13,7 +13,7 @@ import AdminPage from "../components/admin-page";
 
 export default function UserProfile() {
     const navigate = useNavigate();
-    const {loggedUser, logout, setAdmin, isAdmin} = useAuth();
+    const {loggedUser, logout, setAdmin, isAdmin, darkMode} = useAuth();
 
     // list of states, needs to be reduced using the hook useReducer
     const [selectedPage, setSelected] = useState("dashboard")
@@ -187,15 +187,15 @@ export default function UserProfile() {
 
     return (
         <div>
-            <div className="sm:w-[40rem] md:w-full flex-grow px-28 flex items-center font-extralight">
-                <div className="min-w-[20rem] w-full min-h-screen bg-white shadow-md grid grid-rows-3 grid-cols-4">
-                    <div id="username_info" className="border-r-2 row-span-3 col-span-1 flex flex-col items-center h-full min-w-fit">
+            <div className={`sm:w-[40rem] md:w-full flex-grow px-28 flex items-center font-extralight ${darkMode ? "bg-blue-gray-900" : "bg-white"}`}>
+                <div className={`min-w-[20rem] w-full min-h-screen ${darkMode ? "bg-blue-gray-900" : "bg-white"} shadow-md grid grid-rows-3 grid-cols-4`}>
+                    <div id="username_info" className={`border-r-2 row-span-3 col-span-1 flex flex-col items-center h-full min-w-fit ${darkMode ? "border-blue-gray-800" : null}`}>
                         <div className="h-1/2 w-full flex flex-col gap-7 mt-24 px-10">
                             <div id="user_picture" className="bg-gray-500 h-96 w-full flex justify-center items-center">
                                 <img src={userData.imageUrl} alt="User" />
                             </div>
 
-                            <div className="text-center">
+                            <div className={`text-center ${darkMode ? "text-gray-300" : "text-black"}`}>
                                 <h1 className="text-4xl text-nowrap">
                                     {currentUserInfo.name.firstName + " " + currentUserInfo.name.lastName}
                                 </h1>
@@ -207,7 +207,7 @@ export default function UserProfile() {
 
 
                         <div id="page_selection" className="h-1/2 w-full flex justify-center items-end pb-7">
-                            <ul className="text-2xl flex flex-col w-full">
+                            <ul className={`text-2xl flex flex-col w-full ${darkMode ? "text-gray-300" : "text-black"}`}>
                                 <li>
                                     <button className={`flex gap-2 items-center justify-center ${selectedPage === "dashboard" ? "bg-primaryblue-light" : ""} hover:bg-primaryblue-light w-full py-3`} onClick={() => setSelected("dashboard")}>
                                         <BsPersonFill />
@@ -255,13 +255,13 @@ export default function UserProfile() {
                     {selectedPage === "dashboard" && (
                         <div className="col-span-3 row-span-3">
                             <div id="userInformation" className="col-span-3 p-7 mt-16">
-                                <h1 className="text-4xl">
+                                <h1 className={`text-4xl ${darkMode ? "text-gray-300" : "text-black"}`}>
                                     Full Information
                                 </h1>
 
-                                <div className="bg-white">
+                                <div className={`${darkMode ? "bg-blue-gray-900" : "bg-white"}`}>
                                     <ul className="mt-9">
-                                        <li className="border-b-2 h-10 flex items-center justify-between">
+                                        <li className={`border-b-2 h-10 flex items-center justify-between ${darkMode ? "text-gray-300 border-blue-gray-800 " : "text-black"}`}>
                                             <h1 className="font-semibold">
                                                 Full Name
                                             </h1>
@@ -278,7 +278,7 @@ export default function UserProfile() {
                                                 )}
                                             </h1>
                                         </li>
-                                        <li className="border-b-2 h-10 flex items-center gap-20 justify-between">
+                                        <li className={`border-b-2 h-10 flex items-center gap-20 justify-between ${darkMode ? "text-gray-300 border-blue-gray-800" : "text-black"}`}>
                                             <h1 className="font-semibold">
                                                 Location
                                             </h1>
@@ -295,7 +295,7 @@ export default function UserProfile() {
                                                 )}
                                             </h1>
                                         </li>
-                                        <li className="border-b-2 h-10 flex items-center gap-20 justify-between">
+                                        <li className={`border-b-2 h-10 flex items-center gap-20 justify-between ${darkMode ? "text-gray-300 border-blue-gray-800" : "text-black"}`}>
                                             <h1 className="font-semibold">
                                                 Email
                                             </h1>
@@ -312,7 +312,7 @@ export default function UserProfile() {
                                                 )}
                                             </h1>
                                         </li>
-                                        <li className="border-b-2 h-10 flex items-center gap-20 justify-between">
+                                        <li className={`border-b-2 h-10 flex items-center gap-20 justify-between ${darkMode ? "text-gray-300 border-blue-gray-800" : "text-black"}`}>
                                             <h1 className="font-semibold">
                                                 Phone Number
                                             </h1>
@@ -330,20 +330,20 @@ export default function UserProfile() {
                                             </h1>
                                         </li>
                                     </ul>
-                                    <button className="mt-7 py-2 px-8 bg-primaryblue hover:bg-primaryblue-light text-white font-semibold shadow-md rounded-sm" onClick={updateInfo ? submitInfoChange : toggleUpdateInfo}>
+                                    <button className="mt-7 py-2 px-8 bg-primaryblue hover:bg-primaryblue-light text-gray-300 font-semibold shadow-md rounded-sm" onClick={updateInfo ? submitInfoChange : toggleUpdateInfo}>
                                         {updateInfo ? "Save" : "Edit"}
                                     </button>
                                 </div>
                             </div>
-                            <div id="skills" className="col-span-3 border-t-2 p-7">
+                            <div id="skills" className={`col-span-3 border-t-2 p-7 ${darkMode ? "border-blue-gray-800" : null}`}>
                                 <div className="flex items-center gap-5 mb-5">
-                                    <h1 className="text-4xl">
+                                    <h1 className={`text-4xl ${darkMode ? "text-gray-300" : "text-black"}`}>
                                         Skills
                                     </h1>
 
                                     <div className="flex gap-2">
                                         <input 
-                                            className="bg-gray-300 pr-10 pl-2 py-1 placeholder-black rounded-sm" 
+                                            className={`${darkMode ? "bg-blue-gray-800 placeholder-gray-300" : "bg-gray-300 placeholder-black"} pr-10 pl-2 py-1 placeholder-black rounded-sm`}
                                             placeholder="Create a new skill..."
                                             onChange={(e) => setNewSkill(e.target.value)}
                                         />
@@ -353,7 +353,7 @@ export default function UserProfile() {
                                     </div>
                                 </div>
 
-                                <div className="w-full bg-gray-300 min-h-60 rounded-sm p-3">
+                                <div className={`w-full ${darkMode ? "bg-blue-gray-800" : "bg-gray-300"} ${darkMode ? "text-gray-300" : "text-black"} min-h-60 rounded-sm p-3`}>
                                     <ul className="flex gap-3">
                                         {skills.map((skill, index) => (
                                             <li key={index} className="px-3 py-2 bg-gray-400 text-black rounded-md flex items-center gap-3">
@@ -367,14 +367,14 @@ export default function UserProfile() {
                                 </div>
                             </div>
 
-                            <div id="availability" className="col-span-3 border-t-2 p-7 flex flex-col">
-                                <h1 className="text-4xl">
+                            <div id="availability" className={`col-span-3 border-t-2 p-7 flex flex-col ${darkMode ? "border-blue-gray-800" : null}`}>
+                                <h1 className={`text-4xl ${darkMode ? "text-gray-300" : "text-black"}`}>
                                     Availability
                                 </h1>
 
                                 <ul className="grid grid-cols-7 gap-3 mt-5 h-3/5">
                                     {days.map((day) => (
-                                        <li key={day.key} className="bg-gray-300 text-center flex flex-col rounded-sm">
+                                        <li key={day.key} className={`${darkMode ? "bg-blue-gray-800 text-gray-300" : "bg-gray-300 text-black"} text-center flex flex-col rounded-sm`}>
                                             <div className="w-full mt-1 text-md relative">
                                                 {toggleAvail === day.name.toLowerCase() ? (
                                                     <button onClick={() => submitAvailability(day.name.toLowerCase())}>

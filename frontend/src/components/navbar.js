@@ -2,7 +2,7 @@ import React from "react";
 import { useAuth } from "../middleware/user-vertification";
 
 export default function NavBar(){
-    const {isLoggedIn, loggedUser, logout} = useAuth();
+    const {isLoggedIn, loggedUser, logout, darkMode, setDarkMode} = useAuth();
 
     return(
         <div className="flex items-center justify-around bg-primaryblue text-white py-4 z-20 w-screen fixed shadow-lg">
@@ -38,7 +38,17 @@ export default function NavBar(){
                     </h1>
                     <a className="w-9 h-9 rounded-full bg-white" href="/userprofile">
                         
-                    </a>   
+                    </a> 
+
+                    {darkMode === false ? (
+                        <button onClick={() => setDarkMode(true)}>
+                            light
+                        </button>
+                    ) : (
+                        <button onClick={() => setDarkMode(false)}>
+                            dark
+                        </button>
+                    )}
                 </div>
             ) : (
                 <div>

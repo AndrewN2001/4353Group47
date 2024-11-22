@@ -4,7 +4,7 @@ import NavBar from "./components/navbar"
 import Login from "./pages/login";
 import UserProfile from "./pages/user-profile";
 import Registration from "./pages/registration";
-import EventForm from "./pages/event-form";
+import EventForm from "./pages/add-event";
 import HomePage from "./pages/home-page";
 import VolunteerMatching from "./pages/volunteer-matching";
 import Recover from "./pages/forgot-password";

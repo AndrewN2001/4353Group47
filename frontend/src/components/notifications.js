@@ -3,7 +3,7 @@ import { useAuth } from "../middleware/user-vertification";
 import axios from "axios";
 
 export default function Notifications(){
-    const {loggedUser} = useAuth();
+    const {loggedUser, darkMode} = useAuth();
     const [loading, setLoading] = useState(true);
     const [notifications, setNotifications] = useState({
         newEventAssignments: true,
@@ -48,12 +48,12 @@ export default function Notifications(){
 
     return(
         <div className="mt-24 pl-7 col-span-1 w-fit">
-            <h1 className="text-4xl text-nowrap">
+            <h1 className={`${darkMode ? "text-gray-300" : "text-black"} text-4xl text-nowrap`}>
                 Notification Settings
             </h1>
 
             <div className="mt-10">
-                <form className="flex flex-col w-full">
+                <form className={`${darkMode ? "text-gray-300" : null} flex flex-col w-full`}>
                     <div className="flex justify-between">
                         <h1 className="text-xl py-3">
                             New Event Assignments

@@ -7,7 +7,7 @@ export default function AdminPage() {
     const [selectedData, setSelectedData] = useState("volunteers");
     const [userList, setUserList] = useState([]);
     const [eventList, setEventList] = useState([]);
-    const { loggedUser } = useAuth();
+    const { loggedUser, darkMode } = useAuth();
 
     const handleDownload = (fileType) => {
         if (selectedData === "volunteers") {
@@ -20,10 +20,11 @@ export default function AdminPage() {
 
     const volunteersReports = async (fileType) => {
         try {
+            console.log("Starting report download...")
             const response = await axios.get(`http://localhost:3001/api/users/volunteers-reports/${fileType}`, {
                 responseType: 'blob'
             });
-
+            console.log("Response received", response);
             const downloadLink = document.createElement('a');
             downloadLink.href = window.URL.createObjectURL(response.data);
             downloadLink.download = `volunteers_report.${fileType}`;
@@ -81,17 +82,17 @@ export default function AdminPage() {
 
     return (
         <div className="w-full h-full px-7 pt-24">
-            <h1 className="text-4xl">
+            <h1 className={`${darkMode ? "text-gray-300" : "text-black"} text-4xl`}>
                 Retrieve Reports
             </h1>
 
-            <div className="w-full h-full mt-5 border border-gray-300 flex flex-col">
+            <div className={`w-full h-full mt-5 border ${darkMode ? "border-blue-gray-800" : "border-gray-300"} flex flex-col`}>
                 <div className="flex justify-around">
-                    <button className={`${selectedData === "volunteers" ? "bg-gray-300" : "bg-gray-200"} hover:bg-gray-300 py-3 h-full w-full`} onClick={() => setSelectedData("volunteers")}>
+                    <button className={`${selectedData === "volunteers" ? (darkMode ? "bg-blue-gray-800 text-gray-300" : "bg-gray-300") : (darkMode ? "bg-blue-gray-700 text-gray-300 hover:bg-blue-gray-800" : "bg-gray-200 hover:bg-gray-300")} py-3 h-full w-full`} onClick={() => setSelectedData("volunteers")}>
                         Volunteers
                     </button>
 
-                    <button className={`${selectedData === "events" ? "bg-gray-300" : "bg-gray-200"} hover:bg-gray-300 py-3 h-full w-full`} onClick={() => setSelectedData("events")}>
+                    <button className={`${selectedData === "events" ? (darkMode ? "bg-blue-gray-800 text-gray-300" : "bg-gray-300") : (darkMode ? "bg-blue-gray-700 text-gray-300 hover:bg-blue-gray-800" : "bg-gray-200 hover:bg-gray-300")} py-3 h-full w-full`} onClick={() => setSelectedData("events")}>
                         Events
                     </button>
                 </div>
@@ -103,9 +104,9 @@ export default function AdminPage() {
                                 .filter((user) => user.role === "Volunteer")
                                 .map((user, index) => (
                                     <li key={index}>
-                                        <div className="bg-gray-200 hover:bg-gray-300 w-full min-w-48 p-5 flex justify-between">
+                                        <div className={`${darkMode ? "bg-blue-gray-800 placeholder-gray-300" : "bg-gray-200 hover:bg-gray-300"} w-full min-w-48 p-5 flex justify-between`}>
                                             <div className="flex flex-col">
-                                                <h1 className="text-3xl">
+                                                <h1 className={`text-3xl ${darkMode ? "text-gray-300" : null}`}>
                                                     {user.name.firstName + ' ' + user.name.lastName}
                                                 </h1>
                                                 <h2 className="text-sm text-gray-500 mt-1">
@@ -114,7 +115,7 @@ export default function AdminPage() {
                                             </div>
 
                                             <button data-tooltip-target="tooltip-right" data-tooltip-placement="right" type="button" className="text-2xl" onClick={() => toggleDropdown(index)}>
-                                                {dropdowns[index] ? (
+                                                {!dropdowns[index] ? (
                                                     <MdOutlineExpandMore />
                                                 ) : (
                                                     <MdOutlineExpandLess />
@@ -122,8 +123,8 @@ export default function AdminPage() {
                                             </button>
                                         </div>
 
-                                        {!dropdowns[index] ? (
-                                            <div className="bg-gray-400 rounded-b-md px-5 py-2">
+                                        {dropdowns[index] ? (
+                                            <div className={`${darkMode ? "bg-blue-gray-700 text-gray-300" : "bg-gray-400"} rounded-b-md px-5 py-2`}>
                                                 <h1>
                                                     List of Events:
                                                 </h1>
@@ -151,7 +152,7 @@ export default function AdminPage() {
                     {selectedData === "events" && (
                         <ul className="px-5 flex flex-col gap-2 mt-3">
                             {eventList.map((event) => (
-                                <li key={event.id} className="bg-gray-200 hover:bg-gray-300 w-full min-w-48 p-5 flex flex-col justify-between">
+                                <li key={event.id} className={`${darkMode ? "bg-blue-gray-800 hover:bg-blue-gray-900 text-gray-300" : "bg-gray-200 hover:bg-gray-300"} w-full min-w-48 p-5 flex flex-col justify-between`}>
                                     <h1 className="text-2xl">
                                         {event.eventName}
                                     </h1>

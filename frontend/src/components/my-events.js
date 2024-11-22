@@ -5,7 +5,7 @@ import axios from "axios";
 
 export default function Events(){
     const [attendEvents, setAttendEvents] = useState([]);
-    const {loggedUser, isAdmin} = useAuth();
+    const {loggedUser, isAdmin, darkMode} = useAuth();
     const [volunteerData, setVolunteerData] = useState([]);
     const [openIndex, setOpenIndex] = useState(null);
 
@@ -81,7 +81,7 @@ export default function Events(){
     return(
         <div className="mt-24 px-7 w-full h-full">
             <div className="flex justify-between items-center">
-                <h1 className="text-4xl">
+                <h1 className={`${darkMode ? "text-gray-300" : "text-black"} text-4xl`}>
                     My Events
                 </h1>
                 {isAdmin ? (
@@ -95,9 +95,9 @@ export default function Events(){
             <ul className="w-full mt-5 flex flex-col gap-2 h-max">
                 {attendEvents.map((event, index) => (
                     <li key={index} className="">
-                        <button className="bg-gray-200 hover:bg-gray-300 w-full p-5 rounded-md flex flex-col items-center justify-between" onClick={() => toggleDropdown(index)}>
+                        <button className={`${darkMode ? "bg-blue-gray-800 hover:bg-blue-gray-900" : "bg-gray-200 hover:bg-gray-300"} w-full p-5 rounded-md flex flex-col items-center justify-between`} onClick={() => toggleDropdown(index)}>
                             <div className="flex items-center justify-between w-full">
-                                <h1 className="text-3xl font-light">
+                                <h1 className={`text-3xl font-light ${darkMode ? "text-gray-300" : null}`}>
                                     {event.eventName}
                                 </h1>
                                 <div className={`rounded-full w-7 h-7 flex justify-center items-center font-semibold text-xl ${getUrgencyColor(event.urgency)}`}>
@@ -129,10 +129,10 @@ export default function Events(){
                 ))}
             </ul>
 
-            <h1 className="text-4xl mt-5">Volunteering History</h1>
-            <table className="min-w-full bg-white border border-gray-200 rounded-md shadow-md mb-8 mt-5">
+            <h1 className={`${darkMode ? "text-gray-300" : "text-black"} text-4xl mt-5`}>Volunteering History</h1>
+            <table className={`min-w-full border ${darkMode ? "bg-blue-gray-800 border-blue-gray-800" : "bg-white border-gray-200"} rounded-md shadow-md mb-8 mt-5`}>
                 <thead>
-                    <tr className="border-b border-gray-200">
+                    <tr className={`border-b ${darkMode ? "border-blue-gray-700" : "border-gray-200"}`}>
                         <th className="px-4 py-2 text-left text-gray-600">Event Name</th>
                         <th className="px-4 py-2 text-left text-gray-600">Participation Status</th>
                         <th className="px-4 py-2 text-left text-gray-600">Details</th>
@@ -146,10 +146,10 @@ export default function Events(){
                     ) : (
                         volunteerData.map((event, index) => (
                             <React.Fragment key={index}>
-                                <tr className="border-b border-gray-200">
-                                    <td className="px-4 py-2">{event.eventName}</td>
-                                    <td className="px-4 py-2">Participated</td>
-                                    <td className="px-4 py-2">
+                                <tr className={`border-b ${darkMode ? "border-blue-gray-700" : "border-gray-200"}`}>
+                                    <td className={`px-4 py-2 ${darkMode ? "text-gray-300" : null}`}>{event.eventName}</td>
+                                    <td className={`px-4 py-2 ${darkMode ? "text-gray-300" : null}`}>Participated</td>
+                                    <td className={`px-4 py-2 ${darkMode ? "text-gray-300" : null}`}>
                                         <button
                                             onClick={() => handleToggle(index)}
                                             className="text-black-500 hover:text-black-700"
@@ -160,7 +160,7 @@ export default function Events(){
                                 </tr>
                                 {openIndex === index && (
                                     <tr>
-                                        <td colSpan="3" className="bg-gray-300">
+                                        <td colSpan="3" className={`${darkMode ? "bg-blue-gray-700 text-gray-300" : "bg-gray-300"}`}>
                                             <div className="p-4">
                                                 <p><strong>Event Description:</strong> {event.eventDescription}</p>
                                                 <p><strong>Location:</strong> {event.location.city}</p>
