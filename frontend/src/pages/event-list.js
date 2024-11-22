@@ -63,7 +63,7 @@ export default function EventList(){
     }
 
     return(
-        <div className={`min-h-screen relative ${darkMode ? "bg-blue-gray-900" : null}`}>
+        <div className={`min-h-screen relative ${darkMode ? "bg-gray-900" : null}`}>
             <div className="h-2/5 absolute inset-x-0 top-0 flex items-end justify-center">
                 <div>
                     <div className={`${darkMode ? "text-gray-300" : null} text-5xl font-light text-center mb-10`}>
@@ -71,12 +71,12 @@ export default function EventList(){
                     </div>
                     <div className="flex gap-3">
                         <input 
-                            className={`${darkMode ? "bg-blue-gray-700 placeholder-gray-300" : "bg-gray-300"} placeholder-black px-5 py-2 rounded-md w-[54rem] flex items-center gap-3`}
+                            className={`${darkMode ? "bg-gray-700 placeholder-gray-300 text-gray-300" : "bg-gray-300"} placeholder-black px-5 py-2 rounded-md w-[54rem] flex items-center gap-3`}
                             type="text"
                             placeholder="Search for Events"
                         />
                         {isAdmin ? (
-                            <a className={`${darkMode ? "bg-blue-gray-600 text-gray-300 hover:bg-blue-gray-700" : "bg-gray-300"} hover:bg-gray-400 rounded-md px-5 flex items-center`} href="/eventform">
+                            <a className={`${darkMode ? "bg-gray-600 text-gray-300 hover:bg-gray-700" : "bg-gray-300"} hover:bg-gray-400 rounded-md px-5 flex items-center`} href="/eventform">
                                 Add Event
                             </a>
                         ) : (null)}
@@ -87,7 +87,7 @@ export default function EventList(){
                 <ul className="mt-4 flex flex-col gap-2 overflow-auto">
                     {eventList.map((event, index) => (
                     <li key={index}>
-                        <button className={`${darkMode? "bg-blue-gray-800" :"bg-gray-200 hover:bg-gray-300"} w-[72rem] p-5 ${dropDowns[index] ? "rounded-t-md" : "rounded-md"} flex flex-col items-center justify-between`} onClick={() => toggleDropdown(index)}>
+                        <button className={`${darkMode? "bg-gray-800" :"bg-gray-200 hover:bg-gray-300"} w-[72rem] p-5 ${dropDowns[index] ? "rounded-t-md" : "rounded-md"} flex flex-col items-center justify-between`} onClick={() => toggleDropdown(index)}>
                             <div className="flex items-center justify-between w-full">
                                 <h1 className={`text-3xl font-light text-gray-300`}>
                                     {event.eventName}
@@ -108,7 +108,7 @@ export default function EventList(){
                         </button>
 
                         {dropDowns[index] && (
-                            <div className={`flex flex-col items-center justify-between w-full gap-2 ${darkMode? "bg-blue-gray-700" : "bg-gray-300"} rounded-b-md px-5 py-4 mb-2`}>
+                            <div className={`flex flex-col items-center justify-between w-full gap-2 ${darkMode? "bg-gray-700" : "bg-gray-300"} rounded-b-md px-5 py-4 mb-2`}>
                                 <div className={`w-full text-left ${darkMode ? "text-gray-300" : null}`}>
                                     {event.eventDescription}
                                 </div>

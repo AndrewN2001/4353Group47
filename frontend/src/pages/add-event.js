@@ -66,9 +66,9 @@ function EventManagementForm() {
 }, [isLoggedIn, isAdmin, navigate])
 
   return (
-    <div className={`min-w-screen min-h-screen ${darkMode ? "bg-blue-gray-900" : "bg-gray-100"} flex items-center`}>
+    <div className={`min-w-screen min-h-screen ${darkMode ? "bg-gray-900" : "bg-gray-100"} flex items-center`}>
       <div className="max-w-4xl mx-auto p-6 lg:p-12">
-        <div className={`shadow-xl p-8 rounded-sm flex flex-col gap-6 ${darkMode ? "bg-blue-gray-800" : "bg-white"}`}>
+        <div className={`shadow-xl p-8 rounded-sm flex flex-col gap-6 ${darkMode ? "bg-gray-800" : "bg-white"}`}>
           <h2 className={`text-5xl font-bold text-center mb-6 ${darkMode ? "text-gray-300" : null}`}>Event Management Form</h2>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {/* Event Name */}
@@ -80,7 +80,7 @@ function EventManagementForm() {
                 value={eventName}
                 onChange={(e) => setEventName(e.target.value)}
                 required
-                className={`border-2 border-gray-700 pl-3 py-2 rounded-sm w-full ${darkMode ? "bg-blue-gray-700 border-blue-gray-800 border text-gray-300" : null}`}
+                className={`border-2 border-gray-700 pl-3 py-2 rounded-sm w-full ${darkMode ? "bg-gray-700 border-gray-800 border text-gray-300" : null}`}
               />
             </div>
 
@@ -91,7 +91,7 @@ function EventManagementForm() {
                 value={eventDescription}
                 onChange={(e) => setEventDescription(e.target.value)}
                 required
-                className={`border-2 border-gray-700 pl-3 py-2 rounded-sm w-full ${darkMode ? "bg-blue-gray-700 border-blue-gray-800 border text-gray-300" : null}`}
+                className={`border-2 border-gray-700 pl-3 py-2 rounded-sm w-full ${darkMode ? "bg-gray-700 border-gray-800 border text-gray-300" : null}`}
               />
             </div>
 
@@ -102,7 +102,7 @@ function EventManagementForm() {
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 required
-                className={`border-2 border-gray-700 pl-3 py-2 rounded-sm w-full ${darkMode ? "bg-blue-gray-700 border-blue-gray-800 border text-gray-300" : null}`}
+                className={`border-2 border-gray-700 pl-3 py-2 rounded-sm w-full ${darkMode ? "bg-gray-700 border-gray-800 border text-gray-300" : null}`}
               />
             </div>
 
@@ -114,7 +114,7 @@ function EventManagementForm() {
                 value={requiredSkills}
                 onChange={handleSkillsChange}
                 required
-                className={`border-2 border-gray-700 pl-3 py-2 rounded-sm w-full ${darkMode ? "bg-blue-gray-700 border-blue-gray-800 border" : null}`}
+                className={`border-2 border-gray-700 pl-3 py-2 rounded-sm w-full ${darkMode ? "bg-gray-700 border-gray-800 border" : null}`}
               >
                 {skillsOptions.map((skill, index) => (
                   <option key={index} value={skill} className={`${darkMode ? "text-gray-300" : null}`}>
@@ -131,7 +131,7 @@ function EventManagementForm() {
                 value={urgency}
                 onChange={(e) => setUrgency(e.target.value)}
                 required
-                className={`border-2 border-gray-700 pl-3 py-2 rounded-sm w-full ${darkMode ? "bg-blue-gray-700 border-blue-gray-800 border" : null}`}
+                className={`border-2 border-gray-700 pl-3 py-2 rounded-sm w-full ${darkMode ? "bg-gray-700 border-gray-800 border" : null}`}
               >
                 <option value="">Select urgency</option>
                 {urgencyOptions.map((level, index) => (
@@ -151,7 +151,7 @@ function EventManagementForm() {
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                   required
-                  className={`border-2 border-gray-700 pl-3 py-2 rounded-sm w-full ${darkMode ? "bg-blue-gray-700 border-blue-gray-800 border" : null}`}
+                  className={`border-2 border-gray-700 pl-3 py-2 rounded-sm w-full ${darkMode ? "bg-gray-700 border-gray-800 border" : null}`}
                 />
                 <div className="relative">
                   <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
@@ -182,7 +182,7 @@ function EventManagementForm() {
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                   required
-                  className={`border-2 border-gray-700 pl-3 py-2 rounded-sm w-full ${darkMode ? "bg-blue-gray-700 border-blue-gray-800 border" : null}`}
+                  className={`border-2 border-gray-700 pl-3 py-2 rounded-sm w-full ${darkMode ? "bg-gray-700 border-gray-800 border" : null}`}
                 />
                 <div className="relative">
                   <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">

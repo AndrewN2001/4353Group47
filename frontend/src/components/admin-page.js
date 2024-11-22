@@ -86,13 +86,13 @@ export default function AdminPage() {
                 Retrieve Reports
             </h1>
 
-            <div className={`w-full h-full mt-5 border ${darkMode ? "border-blue-gray-800" : "border-gray-300"} flex flex-col`}>
+            <div className={`w-full h-full mt-5 border ${darkMode ? "border-gray-800" : "border-gray-300"} flex flex-col`}>
                 <div className="flex justify-around">
-                    <button className={`${selectedData === "volunteers" ? (darkMode ? "bg-blue-gray-800 text-gray-300" : "bg-gray-300") : (darkMode ? "bg-blue-gray-700 text-gray-300 hover:bg-blue-gray-800" : "bg-gray-200 hover:bg-gray-300")} py-3 h-full w-full`} onClick={() => setSelectedData("volunteers")}>
+                    <button className={`${selectedData === "volunteers" ? (darkMode ? "bg-gray-800 text-gray-300" : "bg-gray-300") : (darkMode ? "bg-gray-700 text-gray-300 hover:bg-gray-800" : "bg-gray-200 hover:bg-gray-300")} py-3 h-full w-full`} onClick={() => setSelectedData("volunteers")}>
                         Volunteers
                     </button>
 
-                    <button className={`${selectedData === "events" ? (darkMode ? "bg-blue-gray-800 text-gray-300" : "bg-gray-300") : (darkMode ? "bg-blue-gray-700 text-gray-300 hover:bg-blue-gray-800" : "bg-gray-200 hover:bg-gray-300")} py-3 h-full w-full`} onClick={() => setSelectedData("events")}>
+                    <button className={`${selectedData === "events" ? (darkMode ? "bg-gray-800 text-gray-300" : "bg-gray-300") : (darkMode ? "bg-gray-700 text-gray-300 hover:bg-gray-800" : "bg-gray-200 hover:bg-gray-300")} py-3 h-full w-full`} onClick={() => setSelectedData("events")}>
                         Events
                     </button>
                 </div>
@@ -104,7 +104,7 @@ export default function AdminPage() {
                                 .filter((user) => user.role === "Volunteer")
                                 .map((user, index) => (
                                     <li key={index}>
-                                        <div className={`${darkMode ? "bg-blue-gray-800 placeholder-gray-300" : "bg-gray-200 hover:bg-gray-300"} w-full min-w-48 p-5 flex justify-between`}>
+                                        <div className={`${darkMode ? "bg-gray-800 placeholder-gray-300" : "bg-gray-200 hover:bg-gray-300"} w-full min-w-48 p-5 flex justify-between`}>
                                             <div className="flex flex-col">
                                                 <h1 className={`text-3xl ${darkMode ? "text-gray-300" : null}`}>
                                                     {user.name.firstName + ' ' + user.name.lastName}
@@ -124,7 +124,7 @@ export default function AdminPage() {
                                         </div>
 
                                         {dropdowns[index] ? (
-                                            <div className={`${darkMode ? "bg-blue-gray-700 text-gray-300" : "bg-gray-400"} rounded-b-md px-5 py-2`}>
+                                            <div className={`${darkMode ? "bg-gray-700 text-gray-300" : "bg-gray-400"} rounded-b-md px-5 py-2`}>
                                                 <h1>
                                                     List of Events:
                                                 </h1>
@@ -152,7 +152,7 @@ export default function AdminPage() {
                     {selectedData === "events" && (
                         <ul className="px-5 flex flex-col gap-2 mt-3">
                             {eventList.map((event) => (
-                                <li key={event.id} className={`${darkMode ? "bg-blue-gray-800 hover:bg-blue-gray-900 text-gray-300" : "bg-gray-200 hover:bg-gray-300"} w-full min-w-48 p-5 flex flex-col justify-between`}>
+                                <li key={event.id} className={`${darkMode ? "bg-gray-800 hover:bg-gray-900 text-gray-300" : "bg-gray-200 hover:bg-gray-300"} w-full min-w-48 p-5 flex flex-col justify-between`}>
                                     <h1 className="text-2xl">
                                         {event.eventName}
                                     </h1>
