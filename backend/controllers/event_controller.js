@@ -206,7 +206,12 @@ const eventsReports = async (req, res) => {
             console.log("pdf");
             const pdfPath = 'events_report.pdf';
             const doc = new PDF();
-            doc.pipe(fs.createWriteStream(pdfPath));
+            // doc.pipe(fs.createWriteStream(pdfPath));
+            doc.pipe(fs.createWriteStream(pdfPath).on('finish', () => {
+                res.setHeader('Content-Type', 'application/pdf');
+                res.setHeader('Content-Disposition', 'attachment; filename="events_report.pdf"');
+                res.sendFile(`${process.cwd()}/events_report.pdf`);
+            }));
             doc.fontSize(20).text('Events Report', { align: 'center' });
             doc.moveDown();
             reportData.forEach(event => {
@@ -226,9 +231,9 @@ const eventsReports = async (req, res) => {
                 doc.moveDown();
             });
             doc.end();
-            res.setHeader('Content-Type', 'text/pdf');
-            res.setHeader('Content-Disposition', 'attachment; filename="events_report.pdf"');
-            res.sendFile(`${process.cwd()}/events_report.pdf`);
+            // res.setHeader('Content-Type', 'text/pdf');
+            // res.setHeader('Content-Disposition', 'attachment; filename="events_report.pdf"');
+            // res.sendFile(`${process.cwd()}/events_report.pdf`);
         }
     } catch (error) {
         console.error("Error generating report:", error);

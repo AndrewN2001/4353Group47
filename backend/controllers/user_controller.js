@@ -231,6 +231,8 @@ const getData = async (req, res) => { // gets all available events and volunteer
     try {
         const events = await eventModel.find();
         const volunteers = await userModel.find();
+        console.log(events);
+        console.log(volunteers);
         res.json({ events, volunteers });
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -332,7 +334,12 @@ const volunteersReports = async (req, res) => {
             console.log("pdf");
             const pdfPath = 'volunteer_report.pdf';
             const doc = new PDF();
-            doc.pipe(fs.createWriteStream(pdfPath));
+            // doc.pipe(fs.createWriteStream(pdfPath));
+            doc.pipe(fs.createWriteStream(pdfPath).on('finish', () => {
+                res.setHeader('Content-Type', 'application/pdf');
+                res.setHeader('Content-Disposition', 'attachment; filename="volunteer_report.pdf"');
+                res.sendFile(`${process.cwd()}/volunteer_report.pdf`);
+            }));
             doc.fontSize(20).text('Volunteers Report', { align: 'center' });
             doc.moveDown();
             reportData.forEach(vol => {
@@ -351,9 +358,9 @@ const volunteersReports = async (req, res) => {
                 doc.moveDown();
             });
             doc.end();
-            res.setHeader('Content-Type', 'text/pdf');
-            res.setHeader('Content-Disposition', 'attachment; filename="volunteer_report.pdf"');
-            res.sendFile(`${process.cwd()}/volunteer_report.pdf`);
+            // res.setHeader('Content-Type', 'application/pdf');
+            // res.setHeader('Content-Disposition', 'attachment; filename="volunteer_report.pdf"');
+            // res.sendFile(`${process.cwd()}/volunteer_report.pdf`);
         }
     } catch (error) {
         console.error("Error generating report:", error);
