@@ -99,7 +99,7 @@ export default function AdminPage() {
 
                 <div className="h-full">
                     {selectedData === "volunteers" && (
-                        <ul className="px-5 flex flex-col gap-2 mt-3">
+                        <ul className="px-5 flex flex-col gap-2 mt-3 overflow-auto">
                             {userList
                                 .filter((user) => user.role === "Volunteer")
                                 .map((user, index) => (

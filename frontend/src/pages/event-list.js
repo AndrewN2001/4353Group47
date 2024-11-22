@@ -43,11 +43,11 @@ export default function EventList(){
 
     const getUrgencyColor = (urgency) => {
         switch (urgency) {
-            case "High":
+            case "high":
                 return "bg-red-200";   // Red for high urgency
-            case "Medium":
+            case "medium":
                 return "bg-yellow-200"; // Yellow for medium urgency
-            case "Low":
+            case "low":
                 return "bg-green-200";  // Green for low urgency
             default:
                 return "bg-gray-300";   // Default color for unknown urgency
@@ -76,6 +76,17 @@ export default function EventList(){
             event.location.state.toLowerCase().includes(value)
         )
         setFilteredEvents(filtered)
+    }
+
+    const handleDeleteEvent = (e) => {
+        axios.delete(`http://localhost:3001/api/events/deleteevent/${e}`)
+        .then(response => {
+            console.log("Event deleted successfully", response)
+            setFilteredEvents(prevEvents => prevEvents.filter(event => event._id != e))
+        })
+        .catch(err => {
+            console.log(err);
+        })
     }
 
     return(
@@ -144,7 +155,7 @@ export default function EventList(){
                                                 <button className="text-primaryblue hover:underline hover:underline-offset-2">
                                                     Update
                                                 </button>
-                                                <button className="text-primaryblue hover:underline hover:underline-offset-2">
+                                                <button className="text-primaryblue hover:underline hover:underline-offset-2" onClick={() => handleDeleteEvent(event._id)}>
                                                     Remove
                                                 </button>
                                             </div>
