@@ -18,9 +18,17 @@ export const AuthProvider = ({children}) => {
         const storedDarkMode = localStorage.getItem("darkMode");
         return storedDarkMode === "true";
     });
+
     useEffect(() => {
         const storedUser = localStorage.getItem("loggedUser")
         const storedAdmin = localStorage.getItem("isAdmin");
+        const sessionKey = "appSessionKey"
+        const currentSession = localStorage.getItem(sessionKey);
+
+        if (!currentSession) {
+            localStorage.clear();
+            localStorage.setItem(sessionKey, Date.now().toString());
+        }
 
         if (storedUser) {
             // console.log(storedUser);

@@ -1,4 +1,5 @@
 import React from "react";
+import { MdLightMode, MdDarkMode } from "react-icons/md";
 import { useAuth } from "../middleware/user-vertification";
 
 export default function NavBar(){
@@ -41,12 +42,12 @@ export default function NavBar(){
                     </a> 
 
                     {darkMode === false ? (
-                        <button onClick={() => setDarkMode(true)}>
-                            light
+                        <button className="text-3xl" onClick={() => setDarkMode(true)}>
+                            <MdLightMode/>
                         </button>
                     ) : (
-                        <button onClick={() => setDarkMode(false)}>
-                            dark
+                        <button className="text-3xl" onClick={() => setDarkMode(false)}>
+                            <MdDarkMode/>
                         </button>
                     )}
                 </div>
